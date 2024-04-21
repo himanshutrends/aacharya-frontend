@@ -1,3 +1,32 @@
-node_modules
-next
-git
+# Dependency directories
+node_modules/
+.next/
+
+# Environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Next.js build output
+out/
+build/
+
+# IDE files
+.idea/
+.vscode/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Package-lock files
+package-lock.json
+yarn.lock
+
