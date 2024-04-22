@@ -178,8 +178,10 @@ const MainContent: React.FC<MainContentProps> = ({ getHighlightedText, transcrip
 
 const VideoDisplay: React.FC<{ getHighlightedText: () => JSX.Element[], transcriptRef: React.RefObject<HTMLDivElement> }> = ({ getHighlightedText, transcriptRef }) => (
   <div className="relative hidden flex-col items-start gap-8 md:flex">
-    <div id="youtube-player" />
-    <div className="grid w-full">
+    <AspectRatio ratio={16 / 9}>
+      <div className="w-[100%] h-[100%] rounded-[10px]" id="youtube-player" />
+    </AspectRatio>
+    <div className="grid w-full gap-3">
       <div ref={transcriptRef} className="w-full h-64 overflow-auto p-2 border rounded" style={{ fontFamily: 'monospace', fontSize: '0.875rem', whiteSpace: 'pre-wrap' }}>
         {getHighlightedText()}
       </div>
