@@ -1,4 +1,9 @@
 'use client'
+
+import React, { useState, useEffect, useRef } from 'react';
+
+import UpNav from "@/components/upnav";
+import LeftNav from "@/components/leftnav";
 import {
   CornerDownLeft,
   Mic,
@@ -7,7 +12,6 @@ import {
   NotebookTabs,
   List,
 } from "lucide-react"
-
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -20,10 +24,6 @@ import {
 } from "@/components/ui/tooltip"
 
 import { AspectRatio } from "@/components/ui/aspect-ratio"
-
-import LeftNav from "@/components/leftnav";
-import UpNav from "@/components/upnav";
-import React, { useState, useEffect, useRef } from 'react';
 
 declare global {
   interface Window {
@@ -50,6 +50,7 @@ const VideoPage: React.FC<VideoPageProps> = ({ params }) => {
   const playerRef = useRef<Window['YT']['Player'] | null>(null);
   const transcriptRef = useRef<HTMLDivElement>(null);
   const activeSegmentRef = useRef<HTMLSpanElement | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchTranscript = async (videoId: string) => {
     try {
@@ -68,33 +69,47 @@ const VideoPage: React.FC<VideoPageProps> = ({ params }) => {
   }, [params.slug]);
 
   useEffect(() => {
-    const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    if (firstScriptTag.parentNode) {
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    const existingScript = document.getElementById('youtube-iframe-script');
+    if (!existingScript) {
+      const tag = document.createElement('script');
+      tag.id = 'youtube-iframe-script';
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
     }
 
     window.onYouTubeIframeAPIReady = () => {
-      playerRef.current = new window.YT.Player('youtube-player', {
-        videoId: params.slug,
-        events: {
-          'onStateChange': onPlayerStateChange,
-        }
-      });
+      if (!playerRef.current) {
+        playerRef.current = new window.YT.Player('youtube-player', {
+          videoId: params.slug,
+          events: {
+            'onStateChange': onPlayerStateChange,
+          }
+        });
+      }
     };
-
+    
     return () => {
-      playerRef.current?.destroy();
+      window.onYouTubeIframeAPIReady = null; // Clean up the global function
     };
-  }, [params.slug]);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      intervalRef.current && clearInterval(intervalRef.current);
+    };
+  }, []);
+
 
   const onPlayerStateChange = (event: Window['YT']['OnStateChangeEvent']) => {
-    if (event.data === YT.PlayerState.PLAYING) {
-      const interval = setInterval(() => {
+    if (event.data === window.YT.PlayerState.PLAYING) {
+      intervalRef.current = setInterval(() => {
         setCurrentTime(playerRef.current?.getCurrentTime() ?? 0);
       }, 500);
-      return () => clearInterval(interval);
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
     }
   };
 
