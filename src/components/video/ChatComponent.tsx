@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,18 +11,24 @@ import { CornerDownLeft, List, Mic, NotebookTabs } from 'lucide-react';
 
 import { useTime } from '@/context/TimeContext';
 
+import { useConversation } from '@/context/ConversationContext';
+
 import  axios from 'axios';
 
 export const ChatComponents: React.FC<{params: {slug: string}}> = ({params}) => {
     const [message, setMessage] = useState('');
+
     // Array of objects with message and isUser properties
-    const [conversation, setConversation] = useState<{ message: string, isUser: boolean }[]>([]);
+    const { conversation, setConversation } = useConversation();
     const { currentTime } = useTime();
 
     const getResponse = async (message: string) => {
         try {
             // Make a POST request to the chatbot API
-            const response = await axios.post(`http://localhost:5000/chat/ask?q=${params.slug}`, { message, timestamp: currentTime});            
+            const response = await axios.post(`http://localhost:5000/chat/ask?q=${params.slug}`, { 
+                message, 
+                timestamp: currentTime
+            });            
             const data = response.data;
             return data['response'];
         } catch (error) {
@@ -33,10 +39,14 @@ export const ChatComponents: React.FC<{params: {slug: string}}> = ({params}) => 
     const handleSendMessage = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         if (message) {
-            setConversation([...conversation, { message, isUser: true }]);
+            console.log('Message:', message);
+            setConversation(prevConversation => [...prevConversation, { message, isUser: true }]);
+    
             getResponse(message).then((response) => {
-                setConversation([...conversation, { message: response, isUser: false }]);
+                console.log('Response:', response);
+                setConversation(prevConversation => [...prevConversation, { message: response, isUser: false }]);
             });
+            console.log('Conversation:', conversation);
         }
         setMessage('');
     }
@@ -46,23 +56,27 @@ export const ChatComponents: React.FC<{params: {slug: string}}> = ({params}) => 
         setMessage(event.target.value);
     }
 
+
+    useEffect(() => {
+    }, [params.slug, conversation]);
+
     return (
-        <div className="relative flex h-full min-h-[50vh] flex-col rounded-xl bg-muted/50 p-4 lg:col-span-1">
-            <Badge variant="outline" className="absolute right-3 top-3">
-                Output
-            </Badge>
-            <div className="flex flex-col gap-2 overflow-auto h-full p-2">
-                {conversation && conversation.map((item, index) => (
-                    <ChatMessage key={index} message={item.message} isUser={item.isUser} />
-                ))}
+            <div className="relative flex h-full min-h-[50vh] flex-col rounded-xl bg-muted/50 p-4 lg:col-span-1">
+                <Badge variant="outline" className="absolute right-3 top-3">
+                    Output
+                </Badge>
+                <div className="flex flex-col gap-2 overflow-auto h-full p-2">
+                    {conversation && conversation.map((item, index) => (
+                        <ChatMessage key={index} message={item.message} isUser={item.isUser} />
+                    ))}
+                </div>
+                <div className="flex-1" />
+                <form className="relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring">
+                    <Label htmlFor="message" className="sr-only">Message</Label>
+                    <Textarea id="message" placeholder="Type your message here..." value={message} onChange={handleOnChange} className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0" />
+                    <TooltipTriggerAndContent handleSendMessage={handleSendMessage} />
+                </form>
             </div>
-            <div className="flex-1" />
-            <form className="relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring">
-                <Label htmlFor="message" className="sr-only">Message</Label>
-                <Textarea id="message" placeholder="Type your message here..." value={message} onChange={handleOnChange} className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0" />
-                <TooltipTriggerAndContent handleSendMessage={handleSendMessage} />
-            </form>
-        </div>
     )
 }
 

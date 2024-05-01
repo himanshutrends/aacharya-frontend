@@ -21,6 +21,7 @@ import { ChatComponents } from "@/components/video/ChatComponent"
 
 // context
 import { TimeProvider } from "@/context/TimeContext"
+import { ConversationProvider } from "@/context/ConversationContext"
 
 interface VideoPageProps {
   params: {
@@ -45,7 +46,9 @@ const VideoPage: React.FC<VideoPageProps> = ({ params }) => {
             <UpNav />
             <main className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-2">
               <VideoDisplay params={params} />
-              <ChatComponents params={params}/>
+              <ConversationProvider>
+                <ChatComponents params={params}/>
+              </ConversationProvider>
             </main>
           </div>
         </div>
