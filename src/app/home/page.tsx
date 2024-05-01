@@ -1,5 +1,6 @@
+"use client";
 import { Triangle } from "lucide-react";
-
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { Button } from "@/components/ui/button";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,7 +8,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import LeftNav from "@/components/leftnav";
 import UpNav from "@/components/upnav";
 
+
+import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
+
 export function HomeSearch() {
+  
   return (
     <TooltipProvider>
       <div className="grid h-screen w-full pl-[53px]">
@@ -37,4 +42,4 @@ export function HomeSearch() {
   );
 }
 
-export default HomeSearch;
+export default withPageAuthRequired(HomeSearch);
