@@ -18,7 +18,8 @@ import { useTime } from '@/context/TimeContext';
 const TranscriptHighlighter: React.FC<TranscriptHighlighterProps> = ({ params }) => {
     const [transcript, setTranscript] = useState<TranscriptSegment[]>([]);
     const transcriptRef = useRef<HTMLDivElement>(null);
-    const activeSegmentRef = useRef<HTMLSpanElement | null>(null);
+    const [activeIndex, setActiveIndex] = useState<number | null>(null); // Store active word index
+
 
     const { currentTime } = useTime();
 
@@ -41,36 +42,52 @@ const TranscriptHighlighter: React.FC<TranscriptHighlighterProps> = ({ params })
 
     // Scroll to the active segment in the transcript
     useEffect(() => {
-        if (activeSegmentRef.current) {
-            transcriptRef.current?.scrollTo({
-                top: activeSegmentRef.current.offsetTop - transcriptRef.current.offsetTop,
-                behavior: "smooth"
+        transcript.some((segment, segmentIndex) => {
+            const words = segment.text.split(' ');
+            const wordDuration = segment.duration / words.length;
+            return words.some((word, wordIndex) => {
+                const wordStartTime = segment.start + wordIndex * wordDuration;
+                const wordEndTime = wordStartTime + wordDuration;
+                if (currentTime >= wordStartTime && currentTime < wordEndTime) {
+                    if (activeIndex !== segmentIndex) {
+                        setActiveIndex(segmentIndex);
+                    }
+                    return true;
+                }
+                return false;
             });
-        }
+        });
     }, [currentTime, transcript]);
 
+    useEffect(() => {
+        if (activeIndex !== null && transcriptRef.current) {
+            const elements = transcriptRef.current.children;
+            if (elements[activeIndex]) {
+                elements[activeIndex].scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }
+        }
+    }, [activeIndex]);
 
     return (
-        <div>
+        <div ref={transcriptRef}>
             {transcript && transcript.map((segment, segmentIndex) => {
                 const words = segment.text.split(' ');
                 const wordDuration = segment.duration / words.length;
-
                 return (
-                    <div key={segmentIndex} style={{ display: 'block' }}>
+                    <div key={segmentIndex}>
                         {words.map((word, wordIndex) => {
                             const wordStartTime = segment.start + wordIndex * wordDuration;
-                            const wordEndTime = wordStartTime + wordDuration;
-                            const isActive = currentTime >= wordStartTime && currentTime < wordEndTime;
                             const isHighlighted = currentTime >= wordStartTime;
-
                             return (
                                 <span
                                     key={wordIndex}
-                                    ref={isActive ? activeSegmentRef : null}
                                     style={{
                                         backgroundColor: isHighlighted ? 'skyBlue' : 'transparent',
-                                        transition: 'background-color 300ms ease-in-out'
+                                        transition: 'background-color 300ms ease-in-out',
+                                        whiteSpace: 'nowrap'
                                     }}
                                 >
                                     {word + ' '}
@@ -82,6 +99,7 @@ const TranscriptHighlighter: React.FC<TranscriptHighlighterProps> = ({ params })
             })}
         </div>
     );
+
 };
 
 export default TranscriptHighlighter;
