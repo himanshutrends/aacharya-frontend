@@ -1,5 +1,7 @@
 'use client'
 
+import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
+
 import React, { useState, useEffect, useRef } from 'react';
 
 // components
@@ -23,6 +25,7 @@ import { ChatComponents } from "@/components/video/ChatComponent"
 import { TimeProvider } from "@/context/TimeContext"
 import { ConversationProvider } from "@/context/ConversationContext"
 
+
 interface VideoPageProps {
   params: {
     slug: string;
@@ -31,6 +34,7 @@ interface VideoPageProps {
 
 const VideoPage: React.FC<VideoPageProps> = ({ params }) => {
   return (
+    
     <TimeProvider>
       <TooltipProvider>
         <div className="grid h-screen w-full pl-[53px]">
@@ -57,4 +61,4 @@ const VideoPage: React.FC<VideoPageProps> = ({ params }) => {
   );
 };
 
-export default VideoPage;
+export default withPageAuthRequired(VideoPage);

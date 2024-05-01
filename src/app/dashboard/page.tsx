@@ -66,7 +66,11 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import LeftNav from "@/components/leftnav";
 import UpNav from "@/components/upnav";
 
+
+import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
+
 export function Dashboard() {
+  
   return (
     <TooltipProvider>
       <div className="grid h-screen w-full pl-[53px]">
@@ -159,4 +163,4 @@ export function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default withPageAuthRequired(Dashboard);
