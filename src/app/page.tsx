@@ -8,6 +8,7 @@ import { Triangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import HeroSectionWithEmailInput from '@/components/ui/HeroToolkit';
+import { ThemeProvider } from 'next-themes';
 export default function Index() {
   const { user, error, isLoading } = useUser();
 
@@ -18,6 +19,12 @@ export default function Index() {
     
     return (
       
+      <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+        >
         <TooltipProvider>
           <div className="grid h-screen w-full pl-[53px]">
             <div className="inset-y fixed left-0 z-20 flex h-full flex-col border-r">
@@ -31,14 +38,15 @@ export default function Index() {
             <div className="flex flex-col">
               <UpNav />
               <main className=" flex justify-center">
-                <div className=''>
+                
                 <HeroSectionWithEmailInput/>
 
-                </div>
+                
               </main>
             </div>
           </div>
         </TooltipProvider>
+        </ThemeProvider>
     );
   }
 
