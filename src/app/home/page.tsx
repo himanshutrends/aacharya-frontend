@@ -12,9 +12,9 @@ import UpNav from "@/components/upnav";
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
 
 export function HomeSearch() {
-  
+  const { user } = useUser();
   return (
-    <TooltipProvider>
+    user && <TooltipProvider>
       <div className="grid h-screen w-full pl-[53px]">
         <aside className="inset-y fixed  left-0 z-20 flex h-full flex-col border-r">
           <div className="border-b p-2">

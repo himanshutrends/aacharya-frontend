@@ -3,13 +3,13 @@ import React, { createContext, useContext, useRef, useCallback } from 'react';
 // Create the context
 interface VideoControlContextType {
     seekTo: (time: number) => void;
-    setPlayer: (player: Window['YT']['Player'] | null) => void;
+    playerRef: React.MutableRefObject<Window['YT']['Player'] | null>;
 }
 
 // Create the context with default values
 const VideoControlContext = createContext<VideoControlContextType>({
     seekTo: () => {},
-    setPlayer: () => {}
+    playerRef: { current: null },
 });
 
 // Context provider component
@@ -17,17 +17,15 @@ export const VideoControlProvider: React.FC<{children: React.ReactNode}> = ({ ch
     const playerRef = useRef<Window['YT']['Player'] | null>(null);
 
     const seekTo = useCallback((timeInSeconds: number) => {
-        if (playerRef.current) {
+        if (playerRef.current && typeof playerRef.current.seekTo === 'function') {
             playerRef.current.seekTo(timeInSeconds, true);
+        } else {
+            console.error('YouTube Player is not initialized yet or seekTo is not available.');
         }
     }, []);
 
-    const setPlayer = useCallback((player: Window['YT']['Player'] | null) => {
-        playerRef.current = player;
-    }, []);
-
     return (
-        <VideoControlContext.Provider value={{ seekTo, setPlayer }}>
+        <VideoControlContext.Provider value={{ seekTo, playerRef }}>
             {children}
         </VideoControlContext.Provider>
     );
