@@ -25,6 +25,7 @@ import { ChatComponents } from "@/components/video/ChatComponent"
 import { TimeProvider } from "@/context/TimeContext"
 import { ConversationProvider } from "@/context/ConversationContext"
 import { VideoControlProvider } from '@/context/VideoControl';
+import { ThemeProvider } from "@/components/themeprovider"
 
 
 interface VideoPageProps {
@@ -35,7 +36,12 @@ interface VideoPageProps {
 
 const VideoPage: React.FC<VideoPageProps> = ({ params }) => {
   return (
-
+    <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+        >
     <TimeProvider>
       <VideoControlProvider>
         <TooltipProvider>
@@ -61,6 +67,7 @@ const VideoPage: React.FC<VideoPageProps> = ({ params }) => {
         </TooltipProvider>
       </VideoControlProvider>
     </TimeProvider>
+    </ThemeProvider>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import { Card, CardContent} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -104,18 +104,21 @@ const parseMessage = (message: string) => {
     });
 };
 
-const ChatMessage: React.FC<{ message: string, isUser: boolean }> = ({ message, isUser }) => {
-    return (
-        <div className={`flex flex-col gap-2 items-start`}>
-            <div className={`flex items-center gap-1.5 flex-row`}>
-                <Badge variant="outline">
-                    {isUser ? 'User' : 'Bot'}
-                </Badge>
-                <span>{parseMessage(message)}</span>
-            </div>
-        </div>
-    );
-}
+const ChatMessage: React.FC<{ message: string; isUser: boolean }> = ({
+  message,
+  isUser,
+}) => {
+  return (
+    <div className={`flex flex-col gap-2 items-start`}>
+      <div className={`gap-1.5 flex flex-row`}>
+        <Badge className='max-h-6 min-w-12' variant="secondary">{isUser ? "User" : "Bot"}</Badge>
+        <Card className="p-2">
+            <span>{parseMessage(message)}</span>         
+        </Card>
+      </div>
+    </div>
+  );
+};
 
 const TooltipTriggerAndContent: React.FC<{ handleSendMessage: (event: React.MouseEvent<HTMLButtonElement>) => void }> = ({ handleSendMessage }) => {
     return (
