@@ -1,13 +1,17 @@
+
 import {
     Book,
+    Home,
     Bot,
     Code2,
     LifeBuoy,
+    
     LogOut,
     Settings2,
     SquareTerminal,
     SquareUser,
   } from "lucide-react"
+  import Link from "next/link";
   
   import { Button } from "@/components/ui/button"
   
@@ -19,7 +23,7 @@ import {
 
 function LeftNav() {
   return (
-    <div className="">
+    <div className="flex flex-col justify-between h-full">
     <nav className="grid gap-1 p-2">
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -29,11 +33,12 @@ function LeftNav() {
                     className="rounded-lg bg-muted"
                     aria-label="Aacharya"
                   >
-                    <SquareTerminal className="size-5" />
+                    
+                    <Link href="/"><Home className="size-5" /></Link>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="right" sideOffset={5}>
-                  Aacharya
+                  Home
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
@@ -44,44 +49,16 @@ function LeftNav() {
                     className="rounded-lg"
                     aria-label="Models"
                   >
-                    <Bot className="size-5" />
+                    <Link href="/dashboard"><SquareUser className="size-5" /></Link>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="right" sideOffset={5}>
-                  Models
+                  Profile
                 </TooltipContent>
               </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="rounded-lg"
-                    aria-label="API"
-                  >
-                    <Code2 className="size-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right" sideOffset={5}>
-                  API
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="rounded-lg"
-                    aria-label="Documentation"
-                  >
-                    <Book className="size-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right" sideOffset={5}>
-                  Documentation
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
+              {/*  */}
+              {/*  */}
+              {/* <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
@@ -95,24 +72,10 @@ function LeftNav() {
                 <TooltipContent side="right" sideOffset={5}>
                   Settings
                 </TooltipContent>
-              </Tooltip>
+              </Tooltip> */}
             </nav>
             <nav className="mt-auto grid gap-1 p-2">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="mt-auto rounded-lg"
-                    aria-label="Help"
-                  >
-                    <LifeBuoy className="size-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right" sideOffset={5}>
-                  Help
-                </TooltipContent>
-              </Tooltip>
+              {/*  */}
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -121,11 +84,11 @@ function LeftNav() {
                     className="mt-auto rounded-lg"
                     aria-label="Account"
                   >
-                    <LogOut className="size-5" />
+                    <Link href='/api/auth/logout'><LogOut className="size-5" /></Link>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="right" sideOffset={5}>
-                  Account
+                  Logout
                 </TooltipContent>
               </Tooltip>
             </nav>
