@@ -30,10 +30,7 @@ export function HomeSearch() {
           </header>
           <main className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-3">
             <div className="relative hidden flex-col items-start gap-8 md:flex lg:col-span-1  lg:row-span-1">
-              <img
-                src="https://www.icegif.com/wp-content/uploads/2022/01/icegif-962.gif"
-                className="rounded-[10px] h-[100%] w-[100%]"
-              ></img>
+              
             </div>
           </main>
         </div>
