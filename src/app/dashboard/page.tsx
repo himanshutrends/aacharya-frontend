@@ -80,6 +80,7 @@ import ActivityCalendar from "react-activity-calendar";
 
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { useUser } from "@auth0/nextjs-auth0/client";
+import { ThemeProvider } from "@/components/themeprovider"
 
 export function Dashboard() {
   const { user, error, isLoading } = useUser();
@@ -89,6 +90,12 @@ export function Dashboard() {
 
   return (
     user && (
+      <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+        >
       <TooltipProvider>
         <div className="grid h-screen w-full pl-[53px]">
           <aside className="inset-y fixed  left-0 z-20 flex h-full flex-col border-r">
@@ -143,7 +150,7 @@ export function Dashboard() {
                 <Card className="w-full h-[10%] lg:col-span-1">
                   <CardHeader>
                     <div className="flex items-center space-x-4">
-                      <img src="#" className="h-12 w-12 rounded-full"></img>
+                      <img src={user.picture} className="h-12 w-12 rounded-full"></img>
                       <div className="space-y-2">
                         <p className="h-4"> Hi {user.name}!</p>
                         <Badge variant="outline">AI Architect</Badge>
@@ -223,6 +230,7 @@ export function Dashboard() {
           </div>
         </div>
       </TooltipProvider>
+      </ThemeProvider>
     )
   );
 }

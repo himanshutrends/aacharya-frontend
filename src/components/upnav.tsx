@@ -1,10 +1,24 @@
+"use client";
+
 import { Search, Share } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
 
+import * as React from "react";
+import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
+import { useTheme } from "next-themes";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 function UpNav() {
+  const { setTheme } = useTheme();
   return (
     <div className="sticky top-0 z-10 flex h-[53px] items-center gap-1 border-b bg-background px-4">
       <h1 className="text-xl font-semibold">Aacharya</h1>
@@ -16,10 +30,42 @@ function UpNav() {
           className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[320px]"
         />
       </div>
-      <Button variant="outline" size="sm" className="ml-auto gap-1.5 text-sm">
-        <Share className="size-3.5" />
-        Feedback
-      </Button>
+      <div className="flex gap-2">
+        <Button variant="outline" size="sm" className="ml-auto gap-1.5 text-sm">
+          <Share className="size-3.5" />
+          Feedback
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon">
+              <SunIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              onClick={(event) => {
+                event.preventDefault();
+                setTheme("light");
+              }}
+            >
+              Light
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={(event) => {
+                event.preventDefault();
+                setTheme("dark");
+              }}
+            >
+              Dark
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTheme("system")}>
+              System
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </div>
   );
 }
