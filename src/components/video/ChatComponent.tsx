@@ -12,6 +12,7 @@ import { CornerDownLeft, List, Mic, NotebookTabs } from 'lucide-react';
 import { useTime } from '@/context/TimeContext';
 
 import { useConversation } from '@/context/ConversationContext';
+import { useVideoControl } from '@/context/VideoControl';
 
 import  axios from 'axios';
 
@@ -79,6 +80,18 @@ export const ChatComponents: React.FC<{params: {slug: string}}> = ({params}) => 
             </div>
     )
 }
+
+const parseMessage = (message: string) => {
+    const timestampRegex = /\[(\d+)\]/g;
+    const { seekTo } = useVideoControl();
+
+    return message.split(timestampRegex).map((part, index) => {
+        if (index % 2 === 1) { // This is a number part
+            return <Button key={index} onClick={() => seekTo(Number(part))} className="text-blue-500 underline">{part}</Button>;
+        }
+        return part;
+    });
+};
 
 const ChatMessage: React.FC<{ message: string, isUser: boolean }> = ({ message, isUser }) => {
     return (
