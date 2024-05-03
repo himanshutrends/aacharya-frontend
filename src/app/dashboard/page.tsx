@@ -1,7 +1,6 @@
 "use client"
 // using pseudo data
 import data from './data'
-// 
 
 
 import * as React from "react"
@@ -74,11 +73,16 @@ import UpNav from "@/components/upnav";
 import ActivityCalendar from 'react-activity-calendar';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 export function Dashboard() {
-  
+  const { user, error, isLoading } = useUser();
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error.message}</div>;
+
   return (
-    <TooltipProvider>
+    user && <TooltipProvider>
       <div className="grid h-screen w-full pl-[53px]">
         <aside className="inset-y fixed  left-0 z-20 flex h-full flex-col border-r">
           <div className="border-b p-2">
@@ -100,7 +104,7 @@ export function Dashboard() {
             >
               <Card className="w-full h-full">
                 <CardHeader>
-                  <CardTitle>Topics Learned</CardTitle>
+                  <CardTitle>{ user.name }</CardTitle>
                   <CardDescription>
                     All topics learned with videos
                   </CardDescription>
