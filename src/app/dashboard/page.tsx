@@ -1,4 +1,9 @@
 "use client"
+// using pseudo data
+import data from './data'
+// 
+
+
 import * as React from "react"
 import {
   Bird,
@@ -66,6 +71,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import LeftNav from "@/components/leftnav";
 import UpNav from "@/components/upnav";
 
+import ActivityCalendar from 'react-activity-calendar';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
 
@@ -121,7 +127,19 @@ export function Dashboard() {
                 <CardHeader>
                   <CardTitle>Streaks</CardTitle>
                 </CardHeader>
-                <CardContent></CardContent>
+                <CardContent>
+                <ActivityCalendar
+  data={data}
+  blockSize={14}
+  blockRadius={3}
+  blockMargin={2}
+  fontSize={16}
+  theme={{
+    light: ['#f0f0f0', '#c4edde', '#7ac7c4', '#f73859', '#384259'],
+    dark: ['#383838', '#4D455D', '#7DB9B6', '#F5E9CF', '#E96479'],
+  }}
+  />
+                </CardContent>
               </Card>
 
               <Card className="w-full h-[50%] lg:col-span-3">
