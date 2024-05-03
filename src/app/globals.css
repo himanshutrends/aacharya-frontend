@@ -79,7 +79,7 @@
 
 
 
-
+/* to be removed after creating landing page */
   .basiccenter{
     display: flex;
     justify-content: center;
@@ -94,3 +94,4 @@
     border: 1px solid var(--primary);
     cursor: pointer;
   }
+  /* remove after making landing page */

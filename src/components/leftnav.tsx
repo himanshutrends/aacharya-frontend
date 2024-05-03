@@ -3,6 +3,7 @@ import {
     Bot,
     Code2,
     LifeBuoy,
+    LogOut,
     Settings2,
     SquareTerminal,
     SquareUser,
@@ -120,7 +121,7 @@ function LeftNav() {
                     className="mt-auto rounded-lg"
                     aria-label="Account"
                   >
-                    <SquareUser className="size-5" />
+                    <LogOut className="size-5" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="right" sideOffset={5}>
