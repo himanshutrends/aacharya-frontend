@@ -18,7 +18,7 @@ function UpNav() {
       </div>
       <Button variant="outline" size="sm" className="ml-auto gap-1.5 text-sm">
         <Share className="size-3.5" />
-        Share
+        Feedback
       </Button>
     </div>
   );
