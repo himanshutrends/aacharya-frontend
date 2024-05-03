@@ -13,11 +13,14 @@ import { useTime } from '@/context/TimeContext';
 
 import { useConversation } from '@/context/ConversationContext';
 import { useVideoControl } from '@/context/VideoControl';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
-import  axios from 'axios';
+import axios from 'axios';
 
-export const ChatComponents: React.FC<{params: {slug: string}}> = ({params}) => {
+export const ChatComponents: React.FC<{ params: { slug: string } }> = ({ params }) => {
     const [message, setMessage] = useState('');
+
+    const { user } = useUser();
 
     // Array of objects with message and isUser properties
     const { conversation, setConversation } = useConversation();
@@ -26,10 +29,11 @@ export const ChatComponents: React.FC<{params: {slug: string}}> = ({params}) => 
     const getResponse = async (message: string) => {
         try {
             // Make a POST request to the chatbot API
-            const response = await axios.post(`http://localhost:5000/chat/ask?q=${params.slug}`, { 
-                message, 
-                timestamp: currentTime
-            });            
+            const response = await axios.post(`http://localhost:5000/chat/ask?q=${params.slug}`, {
+                message,
+                timestamp: currentTime,
+                user: user
+            });
             const data = response.data;
             return data['response'];
         } catch (error) {
@@ -42,7 +46,7 @@ export const ChatComponents: React.FC<{params: {slug: string}}> = ({params}) => 
         if (message) {
             console.log('Message:', message);
             setConversation(prevConversation => [...prevConversation, { message, isUser: true }]);
-    
+
             getResponse(message).then((response) => {
                 console.log('Response:', response);
                 setConversation(prevConversation => [...prevConversation, { message: response, isUser: false }]);
@@ -62,32 +66,39 @@ export const ChatComponents: React.FC<{params: {slug: string}}> = ({params}) => 
     }, [params.slug, conversation]);
 
     return (
-            <div className="relative flex h-full min-h-[50vh] flex-col rounded-xl bg-muted/50 p-4 lg:col-span-1">
-                <Badge variant="outline" className="absolute right-3 top-3">
-                    Output
-                </Badge>
-                <div className="flex flex-col gap-2 overflow-auto h-full p-2">
-                    {conversation && conversation.map((item, index) => (
-                        <ChatMessage key={index} message={item.message} isUser={item.isUser} />
-                    ))}
-                </div>
-                <div className="flex-1" />
-                <form className="relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring">
-                    <Label htmlFor="message" className="sr-only">Message</Label>
-                    <Textarea id="message" placeholder="Type your message here..." value={message} onChange={handleOnChange} className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0" />
-                    <TooltipTriggerAndContent handleSendMessage={handleSendMessage} />
-                </form>
+        <div className="relative flex h-full min-h-[50vh] flex-col rounded-xl bg-muted/50 p-4 lg:col-span-1">
+            <Badge variant="outline" className="absolute right-3 top-3">
+                Output
+            </Badge>
+            <div className="flex flex-col gap-2 overflow-auto h-full p-2">
+                {conversation && conversation.map((item, index) => (
+                    <ChatMessage key={index} message={item.message} isUser={item.isUser} />
+                ))}
             </div>
+            <div className="flex-1" />
+            <form className="relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring">
+                <Label htmlFor="message" className="sr-only">Message</Label>
+                <Textarea id="message" placeholder="Type your message here..." value={message} onChange={handleOnChange} className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0" />
+                <TooltipTriggerAndContent handleSendMessage={handleSendMessage} />
+            </form>
+        </div>
     )
 }
 
 const parseMessage = (message: string) => {
-    const timestampRegex = /\[(\d+)\]/g;
+    // Updated regex to match decimal numbers inside brackets
+    const timestampRegex = /\[(\d+\.\d+)\]/g;
     const { seekTo } = useVideoControl();
 
+    // Splitting message and creating clickable buttons for timestamps
     return message.split(timestampRegex).map((part, index) => {
-        if (index % 2 === 1) { // This is a number part
-            return <Button key={index} onClick={() => seekTo(Number(part))} className="text-blue-500 underline">{part}</Button>;
+        // Checking if this is a decimal number part
+        if (index % 2 === 1) {
+            return (
+                <Button key={index} onClick={() => seekTo(parseFloat(part))} className="text-blue-500">
+                    [{index}]
+                </Button>
+            );
         }
         return part;
     });
@@ -100,7 +111,7 @@ const ChatMessage: React.FC<{ message: string, isUser: boolean }> = ({ message, 
                 <Badge variant="outline">
                     {isUser ? 'User' : 'Bot'}
                 </Badge>
-                <span>{message}</span>
+                <span>{parseMessage(message)}</span>
             </div>
         </div>
     );

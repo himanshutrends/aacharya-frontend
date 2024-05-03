@@ -19,9 +19,8 @@ declare global {
 
 export const VideoDisplay: React.FC<{ params: { slug: string } }> = ({ params }) => {
     const transcriptRef = useRef<HTMLDivElement>(null);
-    const playerRef = useRef<Window['YT']['Player'] | null>(null);
+    const { playerRef } = useVideoControl();
     const intervalRef = useRef<number | null>(null);
-    const { setPlayer } = useVideoControl();
 
     const { updateCurrentTime } = useTime();
 
@@ -44,7 +43,6 @@ export const VideoDisplay: React.FC<{ params: { slug: string } }> = ({ params })
                         'onStateChange': onPlayerStateChange,
                     }
                 });
-                setPlayer(playerRef);
             }
         };
 
