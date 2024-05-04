@@ -9,6 +9,11 @@ import TranscriptHighlighter from '@/components/video/TranscriptHighlighter';
 // context
 import { useTime } from '@/context/TimeContext';
 import { useVideoControl } from '@/context/VideoControl';
+import { useUser } from '@auth0/nextjs-auth0/client';
+import { useConversation } from '@/context/ConversationContext';
+
+import { debounce } from 'lodash';
+import axios from 'axios';
 
 declare global {
     interface Window {
@@ -21,8 +26,10 @@ export const VideoDisplay: React.FC<{ params: { slug: string } }> = ({ params })
     const transcriptRef = useRef<HTMLDivElement>(null);
     const { playerRef } = useVideoControl();
     const intervalRef = useRef<number | null>(null);
+    const { conversation } = useConversation();
 
-    const { updateCurrentTime } = useTime();
+    const { updateCurrentTime, currentTime } = useTime();
+    const { user } = useUser();
 
     // Load the YouTube iframe API script
     useEffect(() => {
@@ -51,10 +58,22 @@ export const VideoDisplay: React.FC<{ params: { slug: string } }> = ({ params })
         };
     }, []);
 
+    const saveToServer = debounce((timestamp: number) => {
+        console.log("Saving to server:", timestamp);
+        // Axios or fetch to send data to your server
+        axios.post('http://localhost:5000/dashboard/update_watch_history', {
+            user: user,
+            video_id: params?.slug,
+            timestamp: timestamp
+        });
+    }, 1000); // Debounce time in milliseconds
+
     const onPlayerStateChange = (event: Window['YT']['OnStateChangeEvent']) => {
         if (event.data === window.YT.PlayerState.PLAYING) {
             intervalRef.current = window.setInterval(() => {
                 updateCurrentTime(playerRef.current?.getCurrentTime() ?? 0);
+                console.log("Current time:", playerRef.current?.getCurrentTime());
+                saveToServer(playerRef.current?.getCurrentTime() ?? 0);
             }, 500);
         } else {
             if (intervalRef.current) {
@@ -70,6 +89,13 @@ export const VideoDisplay: React.FC<{ params: { slug: string } }> = ({ params })
         };
     }, []);
 
+    const handleSummarize = () => {
+        const summary = axios.post(`http://localhost:5000/chat/summarize?q=${params.slug}`, {
+            user: user,
+            conversation: conversation
+        });
+    }
+
     return (
         <div className="relative hidden flex-col items-start gap-8 md:flex">
             <AspectRatio ratio={16 / 9}>
@@ -79,8 +105,8 @@ export const VideoDisplay: React.FC<{ params: { slug: string } }> = ({ params })
                 <div ref={transcriptRef} className="w-full h-64 overflow-auto p-2 border rounded" style={{ fontFamily: 'monospace', fontSize: '0.875rem', whiteSpace: 'pre-wrap' }}>
                     <TranscriptHighlighter params={params} />
                 </div>
-                <Button>
-                    Summarize
+                <Button onClick={handleSummarize}>
+                    Notes
                     <Sparkles className="size-4" />
                 </Button>
             </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -16,6 +16,10 @@ import { useVideoControl } from '@/context/VideoControl';
 import { useUser } from '@auth0/nextjs-auth0/client';
 
 import axios from 'axios';
+
+import { remark } from 'remark'
+import remarkHtml from 'remark-html'
+
 
 export const ChatComponents: React.FC<{ params: { slug: string } }> = ({ params }) => {
     const [message, setMessage] = useState('');
@@ -66,11 +70,11 @@ export const ChatComponents: React.FC<{ params: { slug: string } }> = ({ params 
     }, [params.slug, conversation]);
 
     return (
-        <div className="relative flex h-full min-h-[50vh] flex-col rounded-xl bg-muted/50 p-4 lg:col-span-1">
+        <div className="relative flex h-full min-h-[50vh] flex-col   rounded-xl bg-muted/50 p-4 lg:col-span-1">
             <Badge variant="outline" className="absolute right-3 top-3">
                 Output
             </Badge>
-            <div className="flex flex-col gap-2 overflow-auto h-full p-2">
+            <div className="flex flex-col gap-2 overflow-auto h-full p-2" style={{ "maxHeight": "70vh", "overflow": "scroll" }}>
                 {conversation && conversation.map((item, index) => (
                     <ChatMessage key={index} message={item.message} isUser={item.isUser} />
                 ))}
@@ -105,19 +109,24 @@ const parseMessage = (message: string) => {
 };
 
 const ChatMessage: React.FC<{ message: string; isUser: boolean }> = ({
-  message,
-  isUser,
+    message,
+    isUser,
 }) => {
-  return (
-    <div className={`flex flex-col gap-2 items-start`}>
-      <div className={`gap-1.5 flex flex-row`}>
-        <Badge className='max-h-6 min-w-12' variant="secondary">{isUser ? "User" : "Bot"}</Badge>
-        <Card className="p-2">
-            <span>{parseMessage(message)}</span>         
-        </Card>
-      </div>
-    </div>
-  );
+
+    const markdownToHtml = (markdown: string) => {
+        return remark().use(remarkHtml).processSync(markdown).toString()
+    }
+
+    return (
+        <div className={`flex flex-col gap-2 items-start`}>
+            <div className={`gap-1.5 flex flex-row`}>
+                <Badge className='max-h-6 min-w-12' variant="secondary">{isUser ? "User" : "Bot"}</Badge>
+                <Card className="p-2">
+                    <div dangerouslySetInnerHTML={{ __html: parseMessage(markdownToHtml(message)) }}></div>
+                </Card>
+            </div>
+        </div>
+    );
 };
 
 const TooltipTriggerAndContent: React.FC<{ handleSendMessage: (event: React.MouseEvent<HTMLButtonElement>) => void }> = ({ handleSendMessage }) => {
