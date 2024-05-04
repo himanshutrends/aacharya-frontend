@@ -45,18 +45,12 @@ function UpNav() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onClick={(event) => {
-                event.preventDefault();
-                setTheme("light");
-              }}
+              onClick={() =>setTheme("light")}
             >
               Light
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={(event) => {
-                event.preventDefault();
-                setTheme("dark");
-              }}
+              onClick={() => setTheme("dark")}
             >
               Dark
             </DropdownMenuItem>

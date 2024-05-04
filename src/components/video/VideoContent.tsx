@@ -10,6 +10,7 @@ import TranscriptHighlighter from '@/components/video/TranscriptHighlighter';
 import { useTime } from '@/context/TimeContext';
 import { useVideoControl } from '@/context/VideoControl';
 import { useUser } from '@auth0/nextjs-auth0/client';
+import { useConversation } from '@/context/ConversationContext';
 
 import { debounce } from 'lodash';
 import axios from 'axios';
@@ -25,6 +26,7 @@ export const VideoDisplay: React.FC<{ params: { slug: string } }> = ({ params })
     const transcriptRef = useRef<HTMLDivElement>(null);
     const { playerRef } = useVideoControl();
     const intervalRef = useRef<number | null>(null);
+    const { conversation } = useConversation();
 
     const { updateCurrentTime, currentTime } = useTime();
     const { user } = useUser();
@@ -87,6 +89,13 @@ export const VideoDisplay: React.FC<{ params: { slug: string } }> = ({ params })
         };
     }, []);
 
+    const handleSummarize = () => {
+        const summary = axios.post(`http://localhost:5000/chat/summarize?q=${params.slug}`, {
+            user: user,
+            conversation: conversation
+        });
+    }
+
     return (
         <div className="relative hidden flex-col items-start gap-8 md:flex">
             <AspectRatio ratio={16 / 9}>
@@ -96,8 +105,8 @@ export const VideoDisplay: React.FC<{ params: { slug: string } }> = ({ params })
                 <div ref={transcriptRef} className="w-full h-64 overflow-auto p-2 border rounded" style={{ fontFamily: 'monospace', fontSize: '0.875rem', whiteSpace: 'pre-wrap' }}>
                     <TranscriptHighlighter params={params} />
                 </div>
-                <Button>
-                    Summarize
+                <Button onClick={handleSummarize}>
+                    Notes
                     <Sparkles className="size-4" />
                 </Button>
             </div>

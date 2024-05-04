@@ -57,8 +57,11 @@ const VideoPage: React.FC<VideoPageProps> = ({ params }) => {
             <div className="flex flex-col">
               <UpNav />
               <main className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-2">
-                <VideoDisplay params={params} />
                 <ConversationProvider>
+                  <VideoDisplay params={params} />
+                {/* <div className='max-h-100vh'> */}
+                {/* </div> */}
+                  
                   <ChatComponents params={params} />
                 </ConversationProvider>
               </main>
