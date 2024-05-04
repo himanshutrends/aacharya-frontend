@@ -9,14 +9,10 @@ import { Button } from '@/components/ui/button';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import HeroSectionWithEmailInput from '@/components/ui/HeroToolkit';
 import { ThemeProvider } from 'next-themes';
-export default function Index() {
-  const { user, error, isLoading } = useUser();
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>{error.message}</div>;
-
-  if (user) {
-    
+// import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
+ function Index() {
+ 
     return (
       
       <ThemeProvider
@@ -50,11 +46,4 @@ export default function Index() {
     );
   }
 
-  return(
-    <>
-    
-  <div className='basiccenter'>
-  <Link href="/api/auth/login"><button className='basicbutton'>Login</button></Link>
-</div>
-</>);
-}
+export default Index;
