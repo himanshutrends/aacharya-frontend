@@ -74,7 +74,7 @@ export const ChatComponents: React.FC<{ params: { slug: string } }> = ({ params 
             <Badge variant="outline" className="absolute right-3 top-3">
                 Output
             </Badge>
-            <div className="flex flex-col gap-2 overflow-auto h-full p-2" style={{ "max-height": "70vh", "overflow": "scroll" }}>
+            <div className="flex flex-col gap-2 overflow-auto h-full p-2" style={{ "maxHeight": "70vh", "overflow": "scroll" }}>
                 {conversation && conversation.map((item, index) => (
                     <ChatMessage key={index} message={item.message} isUser={item.isUser} />
                 ))}

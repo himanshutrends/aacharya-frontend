@@ -7,7 +7,7 @@ export default function HeroSectionWithEmailInput() {
   return (
     <>
       {/* Hero */}
-      <div className="container py-24 lg:py-32">
+      <div className="container py-22 lg:py-20">
         {/* Grid */}
         <div className="grid lg:grid-cols-7 lg:gap-x-8 xl:gap-x-12 lg:items-center">
           <div className="lg:col-span-3">
