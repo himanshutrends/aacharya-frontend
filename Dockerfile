@@ -16,6 +16,8 @@ RUN npm install --frozen-lockfile
 # Copy the rest of the application code
 COPY . .
 
+COPY .env .env
+
 # Build the Next.js app
 RUN npm run build
 
