@@ -1,14 +1,13 @@
 'use client'
+import React from 'react';
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
-
-import React from 'react';
 
 // components
 import UpNav from "@/components/upnav";
 import LeftNav from "@/components/leftnav";
 import {
-  Triangle,
+  GraduationCap,
 } from "lucide-react"
 
 // UI components
@@ -37,39 +36,36 @@ interface VideoPageProps {
 const VideoPage: React.FC<VideoPageProps> = ({ params }) => {
   return (
     <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-        >
-    <TimeProvider>
-      <VideoControlProvider>
-        <TooltipProvider>
-          <div className="grid h-screen w-full pl-[53px]">
-            <div className="inset-y fixed left-0 z-20 flex h-full flex-col border-r">
-              <div className="border-b p-2">
-                <Button variant="outline" size="icon" aria-label="Home">
-                  <Triangle className="size-5 fill-foreground" />
-                </Button>
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <TimeProvider>
+        <VideoControlProvider>
+          <TooltipProvider>
+            <div className="grid h-screen w-full pl-[53px]">
+              <div className="inset-y fixed left-0 z-20 flex h-full flex-col border-r">
+                <div className="border-b p-2">
+                  <Button variant="outline" size="icon" aria-label="Home">
+                    <GraduationCap className="size-5 fill-foreground" />
+                  </Button>
+                </div>
+                <LeftNav />
               </div>
-              <LeftNav />
+              <div className="flex flex-col">
+                <UpNav />
+                <main className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-2">
+                  <ConversationProvider>
+                    <VideoDisplay params={params} />
+                    <ChatComponents params={params} />
+                  </ConversationProvider>
+                </main>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <UpNav />
-              <main className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-2">
-                <ConversationProvider>
-                  <VideoDisplay params={params} />
-                {/* <div className='max-h-100vh'> */}
-                {/* </div> */}
-                  
-                  <ChatComponents params={params} />
-                </ConversationProvider>
-              </main>
-            </div>
-          </div>
-        </TooltipProvider>
-      </VideoControlProvider>
-    </TimeProvider>
+          </TooltipProvider>
+        </VideoControlProvider>
+      </TimeProvider>
     </ThemeProvider>
   );
 };

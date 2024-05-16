@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -12,7 +12,7 @@ import { CornerDownLeft, List, Mic, NotebookTabs } from 'lucide-react';
 import { useTime } from '@/context/TimeContext';
 
 import { useConversation } from '@/context/ConversationContext';
-import { useVideoControl } from '@/context/VideoControl';
+import { UseVideoControl } from '@/context/VideoControl';
 import { useUser } from '@auth0/nextjs-auth0/client';
 
 import axios from 'axios';
@@ -33,7 +33,7 @@ export const ChatComponents: React.FC<{ params: { slug: string } }> = ({ params 
     const getResponse = async (message: string) => {
         try {
             // Make a POST request to the chatbot API
-            const response = await axios.post(`http://localhost:5000/chat/ask?q=${params.slug}`, {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/ask?q=${params.slug}`, {
                 message,
                 timestamp: currentTime,
                 user: user
@@ -92,7 +92,7 @@ export const ChatComponents: React.FC<{ params: { slug: string } }> = ({ params 
 const parseMessage = (message: string) => {
     // Updated regex to match decimal numbers inside brackets
     const timestampRegex = /\[(\d+\.\d+)\]/g;
-    const { seekTo } = useVideoControl();
+    const { seekTo } = UseVideoControl();
 
     // Splitting message and creating clickable buttons for timestamps
     return message.split(timestampRegex).map((part, index) => {

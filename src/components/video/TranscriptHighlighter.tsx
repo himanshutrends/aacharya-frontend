@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 interface TranscriptHighlighterProps {
@@ -28,7 +28,7 @@ const TranscriptHighlighter: React.FC<TranscriptHighlighterProps> = ({ params })
 
     const fetchTranscript = async (videoId: string) => {
         try {
-            const response = await axios.post(`http://localhost:5000/chat/transcript?q=${videoId}`, {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/transcript?q=${videoId}`, {
                 user: user
             });
             const data = response.data;
@@ -43,7 +43,7 @@ const TranscriptHighlighter: React.FC<TranscriptHighlighterProps> = ({ params })
         if (params.slug) {
             fetchTranscript(params.slug);
         }
-    }, [params.slug]);
+    }, [params.slug, fetchTranscript]);
 
     // Scroll to the active segment in the transcript
     useEffect(() => {
@@ -62,7 +62,7 @@ const TranscriptHighlighter: React.FC<TranscriptHighlighterProps> = ({ params })
                 return false;
             });
         });
-    }, [currentTime, transcript]);
+    }, [currentTime, transcript, activeIndex]);
 
     useEffect(() => {
         if (activeIndex !== null && transcriptRef.current) {

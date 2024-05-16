@@ -1,4 +1,5 @@
 "use client";
+import React, { useState, useEffect } from "react";
 import { Triangle } from "lucide-react";
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { Button } from "@/components/ui/button";
@@ -11,9 +12,38 @@ import { ThemeProvider } from "@/components/themeprovider"
 
 
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
+import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 
-export function HomeSearch() {
+import axios from "axios";
+import { AspectRatio } from "@radix-ui/react-aspect-ratio";
+import Image from "next/image";
+
+interface Video {
+  video_id: string;
+  title: string;
+}
+
+function HomeSearch() {
   const { user } = useUser();
+  const param = useSearchParams();
+  const [videos, setVideos] = useState<Video[]>([]);
+  
+  const getVideos = async () => {
+    const q = param.get('q')
+    const response = await axios.post(`http://127.0.0.1:5000/?q=${q}`, {
+      user: user,
+    })
+    if (response.data) {
+      console.log(response.data)
+      setVideos(response.data)
+    }
+  }
+
+  useEffect(() => {
+    getVideos();
+  }, [user, getVideos]);
+
   return (
     user && (
       <ThemeProvider
@@ -36,12 +66,21 @@ export function HomeSearch() {
               <header>
                 <UpNav />
               </header>
-              <main className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-3">
-                <div className="relative hidden flex-col items-start gap-8 md:flex lg:col-span-1  lg:row-span-1">
-                  <img
-                    src="https://www.icegif.com/wp-content/uploads/2022/01/icegif-962.gif"
-                    className="rounded-[10px] h-[100%] w-[100%]"
-                  ></img>
+              <main className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-rows-2 lg:grid-cols-3">
+                <div className="relative hidden flex-row items-start gap-8 md:flex lg:col-span-3  lg:row-span-2">
+                  {videos && videos.map((item, index) => (
+                    <AspectRatio ratio={16 / 9} key={index}>
+                      <Link href={`/video/${item.video_id}`} key={index}>
+                        <Image
+                          src={`https://i.ytimg.com/vi/${item.video_id}/hqdefault.jpg`}
+                          className="rounded-[10px] h-[100%] w-[100%] object-contain"
+                          alt={item.title}
+                          width={240}
+                          height={240}
+                        />
+                      </Link>
+                    </AspectRatio>
+                  ))}
                 </div>
               </main>
             </div>
