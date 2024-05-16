@@ -91,7 +91,7 @@ export const VideoDisplay: React.FC<{ params: { slug: string } }> = ({ params })
     }, []);
 
     const handleSummarize = () => {
-        const summary = axios.post(`http://localhost:8080/chat/summarize?q=${params.slug}`, {
+        const summary = axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/summarize?q=${params.slug}`, {
             user: user,
             conversation: conversation
         });
