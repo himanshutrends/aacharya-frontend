@@ -21,7 +21,7 @@ jobs:
       
       - name: Pull Recent git changes
         run: |
-          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd aacharya.client && git pull main'
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd aacharya.client && git pull'
   
       - name: Set Django ENV
         run: |
