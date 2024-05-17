@@ -14,17 +14,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: SSH Deploy
-        # Use the 'appleboy/ssh-action' action for SSH deployment
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }} # Your server's IP address
-          username: ${{ secrets.USERNAME }} # Your server's username
-          key: ${{ secrets.SSH_PRIVATE_KEY }} # Your server's SSH private key
-          script: |
-            cd /aacharya.client
-            docker-compose down
-            git pull
-            touch .env
-            echo "${{ secrets.CLIENT_SECRETS }}" >> .env
-            docker-compose up -d --build
+      - name: Set permissions for private key
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > key.pem
+          chmod 600 key.pem
+      
+      - name: Pull Recent git changes
+        run: |
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd aacharya.client && git pull main'
+  
+      - name: Set Django ENV
+        run: |
+          echo "${{ secrets.CLIENT_SECRETS }}" > .env
+          scp -i key.pem $(pwd)/.env ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ubuntu/aacharya.client/.env
+  
+      - name: Stop running container
+        run: |
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'docker-compose -f "/home/ubuntu/aacharya.client/docker-compose.yml" down'
+
+      - name: Run new container
+        run: |
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'docker-compose -f "/home/ubuntu/aacharya.client/docker-compose.yml" up -d --build'
