@@ -21,17 +21,17 @@ jobs:
       
       - name: Pull Recent git changes
         run: |
-          ssh -o StrictHostKeyChecking=no -i key.pem "${{ secrets.USERNAME }}"@"${{ secrets.HOST }}" 'cd aacharya.client && git pull main'
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd aacharya.client && git pull main'
   
       - name: Set Django ENV
         run: |
           echo "${{ secrets.CLIENT_SECRETS }}" > .env
-          scp -i key.pem $(pwd)/.env "${{ secrets.USERNAME }}"@"${{ secrets.HOST }}":/home/ubuntu/aacharya.client/.env
+          scp -i key.pem $(pwd)/.env ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ubuntu/aacharya.client/.env
   
       - name: Stop running container
         run: |
-          ssh -o StrictHostKeyChecking=no -i key.pem "${{ secrets.USERNAME }}"@"${{ secrets.HOST }}" 'docker-compose -f "/home/ubuntu/aacharya.client/docker-compose.yml" down'
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'docker-compose -f "/home/ubuntu/aacharya.client/docker-compose.yml" down'
 
       - name: Run new container
         run: |
-          ssh -o StrictHostKeyChecking=no -i key.pem "${{ secrets.USERNAME }}"@"${{ secrets.HOST }}" 'docker-compose -f "/home/ubuntu/aacharya.client/docker-compose.yml" up -d --build'
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'docker-compose -f "/home/ubuntu/aacharya.client/docker-compose.yml" up -d --build'
