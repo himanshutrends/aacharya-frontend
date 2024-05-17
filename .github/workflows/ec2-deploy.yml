@@ -30,8 +30,8 @@ jobs:
   
       - name: Stop running container
         run: |
-          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'docker-compose -f "/home/ubuntu/aacharya.client/docker-compose.yml" down'
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'docker compose -f "/home/ubuntu/aacharya.client/docker-compose.yml" down'
 
       - name: Run new container
         run: |
-          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'docker-compose -f "/home/ubuntu/aacharya.client/docker-compose.yml" up -d --build'
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'docker compose -f "/home/ubuntu/aacharya.client/docker-compose.yml" up -d --build'
