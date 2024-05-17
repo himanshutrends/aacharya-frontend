@@ -31,7 +31,7 @@ function HomeSearch() {
   
   const getVideos = async () => {
     const q = param.get('q')
-    const response = await axios.post(`http://127.0.0.1:5000/?q=${q}`, {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}?q=${q}`, {
       user: user,
     })
     if (response.data) {

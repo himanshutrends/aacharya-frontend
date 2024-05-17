@@ -13,8 +13,6 @@ COPY package*.json ./
 # Install dependencies including all necessary build tools
 RUN npm install --frozen-lockfile
 
-ENV NEXT_PUBLIC_API_DOMAIN='http://13.202.124.81/flask/'
-
 # Copy the rest of the application code
 COPY . .
 
