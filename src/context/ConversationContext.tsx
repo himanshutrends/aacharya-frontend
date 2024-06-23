@@ -13,7 +13,7 @@ interface ConversationContextType {
 // Set default values and functions in the context
 const ConversationContext = createContext<ConversationContextType>({
     conversation: [],
-    setConversation: () => { }
+    setConversation: () => {}
 });
 
 export const useConversation = () => useContext(ConversationContext);

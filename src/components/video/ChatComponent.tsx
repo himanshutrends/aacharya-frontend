@@ -13,7 +13,7 @@ import { useTime } from '@/context/TimeContext';
 
 import { useConversation } from '@/context/ConversationContext';
 import { UseVideoControl } from '@/context/VideoControl';
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { useUser } from '@/context/User';
 
 import axios from 'axios';
 

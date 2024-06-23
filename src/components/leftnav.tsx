@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use } from "react";
 import {
   Home,
   LogOut,
@@ -13,8 +13,24 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useRouter } from 'next/navigation'
+import { useUser } from "@/context/User";
 
 function LeftNav() {
+  const router = useRouter()
+  const { user, logout } = useUser()
+
+  const handleLogout = async () => {
+    try {
+      logout()
+      router.push("auth/login")
+      console.log("Logged out")
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  
   return (
     <div className="flex flex-col justify-between h-full">
       <nav className="grid gap-1 p-2">
@@ -76,11 +92,12 @@ function LeftNav() {
               size="icon"
               className="mt-auto rounded-lg"
               aria-label="Account"
+              onClick={handleLogout}
             >
-              <Link href='/api/auth/logout'><LogOut className="size-5" /></Link>
+              <LogOut className="size-5" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="right" sideOffset={5}>
+          <TooltipContent side="right" sideOffset={5} >
             Logout
           </TooltipContent>
         </Tooltip>

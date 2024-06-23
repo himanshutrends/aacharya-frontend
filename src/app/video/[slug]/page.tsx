@@ -1,8 +1,6 @@
 'use client'
 import React from 'react';
 
-import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
-
 // components
 import UpNav from "@/components/upnav";
 import LeftNav from "@/components/leftnav";
@@ -70,4 +68,4 @@ const VideoPage: React.FC<VideoPageProps> = ({ params }) => {
   );
 };
 
-export default withPageAuthRequired(VideoPage);
+export default VideoPage;

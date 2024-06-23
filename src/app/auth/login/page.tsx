@@ -1,5 +1,6 @@
+"use client"
+import React, { use, useState, useEffect } from "react"
 import Link from "next/link"
-
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -10,10 +11,76 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { redirect, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
+ 
 export default function LoginForm() {
+  const [user, setUser] = useState({ email: "", password: "" })
+  const [loading, setLoading] = useState(false)
+
+  const searchParams = useSearchParams();
+  const router = useRouter()
+
+  useEffect(() => {
+    const token = searchParams.get('token')
+    if (token) {
+      sessionStorage.setItem("access_token", token)
+      redirect('/')
+    }
+    else if (sessionStorage.getItem('access_token')) {
+      redirect('/')
+    }
+  }, [searchParams])
+
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
+    setUser((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setLoading(true)
+    try {
+      if (!user.email || !user.password) {
+        return
+      }
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      })
+      if (response.status === 200) {
+        const { access_token } = await response.json()
+        sessionStorage.setItem("access_token", access_token)
+        router.push("/")
+      } else {
+        const { error } = await response.json()
+        console.error(error)
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleGoogleLogin = async () => {
+    setLoading(true)
+    try {
+      window.location.href = `${process.env.NEXT_PUBLIC_API_DOMAIN}auth/login/google`
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
-    <Card className="mx-auto max-w-sm">
+    !loading && <Card className="mx-auto max-w-sm">
       <CardHeader>
         <CardTitle className="text-2xl">Login</CardTitle>
         <CardDescription>
@@ -21,13 +88,16 @@ export default function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4">
+        <form className="grid gap-4" onSubmit={handleSubmit}>
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
+              name="email"
               placeholder="m@example.com"
+              value={user.email}
+              onChange={handleChange}
               required
             />
           </div>
@@ -38,15 +108,21 @@ export default function LoginForm() {
                 Forgot your password?
               </Link>
             </div>
-            <Input id="password" type="password" required />
+            <Input 
+              id="password" 
+              type="password" 
+              name="password"
+              value={user.password} 
+              onChange={handleChange} 
+              required/>
           </div>
           <Button type="submit" className="w-full">
             Login
           </Button>
-          <Button variant="outline" className="w-full">
+          <Button variant="outline" className="w-full" onClick={handleGoogleLogin}>
             Login with Google
           </Button>
-        </div>
+        </form>
         <div className="mt-4 text-center text-sm">
           Don&apos;t have an account?{" "}
           <Link href="#" className="underline">

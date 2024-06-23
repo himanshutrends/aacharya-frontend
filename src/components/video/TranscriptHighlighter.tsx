@@ -15,7 +15,7 @@ interface TranscriptSegment {
 
 // context
 import { useTime } from '@/context/TimeContext';
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { useUser } from '@/context/User';
 
 const TranscriptHighlighter: React.FC<TranscriptHighlighterProps> = ({ params }) => {
     const [transcript, setTranscript] = useState<TranscriptSegment[]>([]);
@@ -27,14 +27,16 @@ const TranscriptHighlighter: React.FC<TranscriptHighlighterProps> = ({ params })
     const { user } = useUser();
 
     const fetchTranscript = async (videoId: string) => {
-        try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/transcript?q=${videoId}`, {
-                user: user
-            });
-            const data = response.data;
-            setTranscript(data);
-        } catch (error) {
-            console.error('Failed to fetch transcript:', error);
+        if(user){
+            try {
+                const response = await axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/transcript?q=${videoId}/`, {
+                    user: user
+                });
+                const data = response.data;
+                setTranscript(data);
+            } catch (error) {
+                console.error('Failed to fetch transcript:', error);
+            }
         }
     };
 

@@ -9,7 +9,7 @@ import TranscriptHighlighter from '@/components/video/TranscriptHighlighter';
 // context
 import { useTime } from '@/context/TimeContext';
 import { UseVideoControl } from '@/context/VideoControl';
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { useUser } from '@/context/User';
 import { useConversation } from '@/context/ConversationContext';
 
 import { debounce } from 'lodash';

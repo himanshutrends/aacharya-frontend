@@ -38,8 +38,7 @@ import UpNav from "@/components/upnav";
 
 import ActivityCalendar from "react-activity-calendar";
 
-import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { useUser } from "@/context/User";
 import { ThemeProvider } from "@/components/themeprovider"
 
 import Image from 'next/image'
@@ -80,10 +79,13 @@ function Dashboard() {
 
   const fetchProfile = useCallback(async () => {
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}dashboard/`, {
-        "user": user
-      })
-      setProfile(response.data)
+      console.log(user)
+      if (user){
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}dashboard/`,{
+          "user": user
+        })
+        setProfile(response.data)
+      }
     } catch (error) {
       console.error('Failed to fetch profile:', error);
     }
@@ -108,6 +110,7 @@ function Dashboard() {
   
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>{error.message}</div>;
+
   return (
     user && (
       <ThemeProvider
@@ -185,7 +188,7 @@ function Dashboard() {
                           height={100}
                         />
                         <div className="space-y-2">
-                          <p className="h-4"> Hi {user.name}!</p>
+                          <p className="h-4"> Hi {user?.name}!</p>
                           <Badge variant="outline">AI Architect</Badge>
                         </div>
                       </div>
@@ -244,4 +247,4 @@ function Dashboard() {
   );
 }
 
-export default withPageAuthRequired(Dashboard);
+export default Dashboard;

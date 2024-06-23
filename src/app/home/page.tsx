@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Triangle } from "lucide-react";
-import { useUser } from '@auth0/nextjs-auth0/client';
 import { Button } from "@/components/ui/button";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,13 +10,14 @@ import UpNav from "@/components/upnav";
 import { ThemeProvider } from "@/components/themeprovider"
 
 
-import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
 import axios from "axios";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import Image from "next/image";
+
+import { useUser } from "@/context/User";
 
 interface Video {
   video_id: string;
@@ -26,23 +26,24 @@ interface Video {
 
 function HomeSearch() {
   const { user } = useUser();
+
   const param = useSearchParams();
   const [videos, setVideos] = useState<Video[]>([]);
   
-  const getVideos = async () => {
-    const q = param.get('q')
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}?q=${q}`, {
-      user: user,
-    })
-    if (response.data) {
-      console.log(response.data)
-      setVideos(response.data)
-    }
-  }
-
   useEffect(() => {
-    getVideos();
-  }, [user, getVideos]);
+    (async () => {
+      if(user){
+        const q = param.get('q')
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}?q=${q}`, {
+          user: user,
+        })
+        if (response.data) {
+          console.log(response.data)
+          setVideos(response.data)
+        }
+      }
+    })()
+  }, [user]);
 
   return (
     user && (
@@ -91,4 +92,4 @@ function HomeSearch() {
   );
 }
 
-export default withPageAuthRequired(HomeSearch);
+export default HomeSearch;
