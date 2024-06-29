@@ -8,12 +8,12 @@ interface VideoControlContextType {
 
 // Create the context with default values
 const VideoControlContext = createContext<VideoControlContextType>({
-    seekTo: () => {},
+    seekTo: () => { },
     playerRef: { current: null },
 });
 
 // Context provider component
-export const VideoControlProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+export const VideoControlProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const playerRef = useRef<Window['YT']['Player'] | null>(null);
 
     const seekTo = useCallback((timeInSeconds: number) => {
@@ -32,4 +32,4 @@ export const VideoControlProvider: React.FC<{children: React.ReactNode}> = ({ ch
 };
 
 // Hook to use the video control context
-export const useVideoControl = () => useContext(VideoControlContext);
+export const UseVideoControl = () => useContext(VideoControlContext);

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 interface TranscriptHighlighterProps {
@@ -15,10 +15,10 @@ interface TranscriptSegment {
 
 // context
 import { useTime } from '@/context/TimeContext';
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { useUser } from '@/context/User';
 
 const TranscriptHighlighter: React.FC<TranscriptHighlighterProps> = ({ params }) => {
-    const [transcript, setTranscript] = useState<TranscriptSegment[]>([]);
+    const [transcript, setTranscript] = useState<TranscriptSegment[] | null>(null);
     const transcriptRef = useRef<HTMLDivElement>(null);
     const [activeIndex, setActiveIndex] = useState<number | null>(null); // Store active word index
 
@@ -27,14 +27,19 @@ const TranscriptHighlighter: React.FC<TranscriptHighlighterProps> = ({ params })
     const { user } = useUser();
 
     const fetchTranscript = async (videoId: string) => {
-        try {
-            const response = await axios.post(`http://localhost:5000/chat/transcript?q=${videoId}`, {
-                user: user
-            });
-            const data = response.data;
-            setTranscript(data);
-        } catch (error) {
-            console.error('Failed to fetch transcript:', error);
+        if(user){
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/transcript?q=${videoId}/`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${sessionStorage.getItem('access_token')}`
+                    }
+                });
+                const data = response.data;
+                setTranscript(data);
+            } catch (error) {
+                console.error('Failed to fetch transcript:', error);
+            }
         }
     };
 
@@ -43,10 +48,13 @@ const TranscriptHighlighter: React.FC<TranscriptHighlighterProps> = ({ params })
         if (params.slug) {
             fetchTranscript(params.slug);
         }
-    }, [params.slug]);
+    }, [params.slug, fetchTranscript]);
 
     // Scroll to the active segment in the transcript
     useEffect(() => {
+        if (!transcript) {
+            return;
+        }
         transcript.some((segment, segmentIndex) => {
             const words = segment.text.split(' ');
             const wordDuration = segment.duration / words.length;
@@ -62,7 +70,7 @@ const TranscriptHighlighter: React.FC<TranscriptHighlighterProps> = ({ params })
                 return false;
             });
         });
-    }, [currentTime, transcript]);
+    }, [currentTime, transcript, activeIndex]);
 
     useEffect(() => {
         if (activeIndex !== null && transcriptRef.current) {

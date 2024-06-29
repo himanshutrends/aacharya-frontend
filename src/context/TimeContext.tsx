@@ -8,7 +8,7 @@ interface TimeContextType {
 // Set default values and functions in the context
 const TimeContext = createContext<TimeContextType>({
   currentTime: 0,
-  updateCurrentTime: () => {}
+  updateCurrentTime: () => { }
 });
 
 export const useTime = () => useContext(TimeContext);

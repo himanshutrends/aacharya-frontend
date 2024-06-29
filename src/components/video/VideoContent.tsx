@@ -8,8 +8,8 @@ import TranscriptHighlighter from '@/components/video/TranscriptHighlighter';
 
 // context
 import { useTime } from '@/context/TimeContext';
-import { useVideoControl } from '@/context/VideoControl';
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { UseVideoControl } from '@/context/VideoControl';
+import { useUser } from '@/context/User';
 import { useConversation } from '@/context/ConversationContext';
 
 import { debounce } from 'lodash';
@@ -24,12 +24,26 @@ declare global {
 
 export const VideoDisplay: React.FC<{ params: { slug: string } }> = ({ params }) => {
     const transcriptRef = useRef<HTMLDivElement>(null);
-    const { playerRef } = useVideoControl();
+    const { playerRef } = UseVideoControl();
     const intervalRef = useRef<number | null>(null);
     const { conversation } = useConversation();
 
     const { updateCurrentTime, currentTime } = useTime();
     const { user } = useUser();
+
+    const onPlayerStateChange = (event: Window['YT']['OnStateChangeEvent']) => {
+        if (event.data === window.YT.PlayerState.PLAYING) {
+            intervalRef.current = window.setInterval(() => {
+                updateCurrentTime(playerRef.current?.getCurrentTime() ?? 0);
+                console.log("Current time:", playerRef.current?.getCurrentTime());
+                saveToServer(playerRef.current?.getCurrentTime() ?? 0);
+            }, 500);
+        } else {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+        }
+    };
 
     // Load the YouTube iframe API script
     useEffect(() => {
@@ -56,31 +70,23 @@ export const VideoDisplay: React.FC<{ params: { slug: string } }> = ({ params })
         return () => {
             window.onYouTubeIframeAPIReady = null;
         };
-    }, []);
+    }, [onPlayerStateChange, params.slug, playerRef]);
 
     const saveToServer = debounce((timestamp: number) => {
         console.log("Saving to server:", timestamp);
+        const token = sessionStorage.getItem('access_token');
         // Axios or fetch to send data to your server
-        axios.post('http://localhost:5000/dashboard/update_watch_history', {
-            user: user,
-            video_id: params?.slug,
-            timestamp: timestamp
-        });
-    }, 1000); // Debounce time in milliseconds
-
-    const onPlayerStateChange = (event: Window['YT']['OnStateChangeEvent']) => {
-        if (event.data === window.YT.PlayerState.PLAYING) {
-            intervalRef.current = window.setInterval(() => {
-                updateCurrentTime(playerRef.current?.getCurrentTime() ?? 0);
-                console.log("Current time:", playerRef.current?.getCurrentTime());
-                saveToServer(playerRef.current?.getCurrentTime() ?? 0);
-            }, 500);
-        } else {
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
+        if (user) {
+            axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}dashboard/update_watch_history`, {
+                video_id: params?.slug,
+                timestamp: timestamp
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             }
-        }
-    };
+        )}
+    }, 1000); // Debounce time in milliseconds
 
     // Clear the interval when the component unmounts
     useEffect(() => {
@@ -90,7 +96,7 @@ export const VideoDisplay: React.FC<{ params: { slug: string } }> = ({ params })
     }, []);
 
     const handleSummarize = () => {
-        const summary = axios.post(`http://localhost:5000/chat/summarize?q=${params.slug}`, {
+        const summary = axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/summarize?q=${params.slug}`, {
             user: user,
             conversation: conversation
         });

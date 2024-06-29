@@ -1,8 +1,9 @@
 "use client";
+import React, { useEffect, useCallback } from "react";
+
 // using pseudo data
 import data from "./data";
 
-import React, { useEffect } from "react";
 import {
   Triangle,
 } from "lucide-react";
@@ -29,7 +30,6 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
 
-
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -38,8 +38,7 @@ import UpNav from "@/components/upnav";
 
 import ActivityCalendar from "react-activity-calendar";
 
-import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { useUser } from "@/context/User";
 import { ThemeProvider } from "@/components/themeprovider"
 
 import Image from 'next/image'
@@ -49,37 +48,70 @@ import axios from 'axios'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 
-export function Dashboard() {
+interface VideoDescription {
+  channelTitle: string;
+  thumbnails?: {
+    maxres?: {
+      url: string;
+    };
+  };
+}
+
+interface Video {
+  video?: {
+    description: VideoDescription;
+  };
+}
+
+interface Note {
+  notes: string;  // Assuming each item in the array has a `notes` property that is a string.
+}
+
+interface Profile {
+  notes?: Note[];
+  watchHistory?: Video[];
+}
+
+function Dashboard() {
   const { user, error, isLoading } = useUser();
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>{error.message}</div>;
+  const [profile, setProfile] = React.useState<Profile | null>(null)
 
-  const [profile, setProfile] = React.useState(null);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
-      const response = await axios.post('http://localhost:5000/dashboard/', {
-        "user": user
-      })
-      console.log(response.data)
-      setProfile(response.data)
+      console.log(user)
+      if (user){
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}dashboard/`,{
+          "user": user
+        })
+        setProfile(response.data)
+      }
     } catch (error) {
       console.error('Failed to fetch profile:', error);
     }
-  }
+  }, [user])
 
   useEffect(() => {
     fetchProfile()
-  }, [])
+  }, [fetchProfile])
 
   const markdownToHtml = (markdown: string) => {
     return remark().use(remarkHtml).processSync(markdown).toString()
   }
 
+  const renderNotesHtml = () => {
+    if (!profile || !profile.notes || profile.notes.length === 0) {
+      return { __html: '<p>No notes available.</p>' };  // Default message when no notes are found
+    }
+  
+    const firstNoteContent = profile.notes[0].notes;  // Safely accessed
+    return { __html: markdownToHtml(firstNoteContent) };
+  };
+  
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error.message}</div>;
 
   return (
-    user && (
       <ThemeProvider
         attribute="class"
         defaultTheme="system"
@@ -113,21 +145,27 @@ export function Dashboard() {
                         All topics learned with videos
                       </CardDescription>
                     </CardHeader>
-                    {profile && (profile as { watchHistory?: string[] })?.watchHistory?.map((video, index) => (
+                    {profile && (profile as Profile).watchHistory?.map((videoItem, index) => (
                       <CardContent key={index}>
                         <Card className="w-full h-full">
                           <CardHeader>
-                            <CardTitle>{(video as { topic?: { category?: string } })?.topic?.category}</CardTitle>
+                            <CardTitle>{(videoItem as any).topic?.category}</CardTitle>
                           </CardHeader>
                           <CardContent>
                             <HoverCard>
                               <HoverCardTrigger>
-                                <Badge>{video?.video?.description?.channelTitle}</Badge>
+                                <Badge>{videoItem.video?.description?.channelTitle}</Badge>
                               </HoverCardTrigger>
                               <AspectRatio ratio={parseFloat("16/9")}>
                                 <HoverCardContent className="h-full">
-                                  <img className="rounded-md" src={video?.video?.description?.thumbnails?.maxres?.url}></img>
-                                  <p className="bold size-10 w-full">{video?.video?.description?.channelTitle}</p>
+                                  <Image
+                                    className="rounded-md"
+                                    src={videoItem.video?.description?.thumbnails?.maxres?.url || ''}
+                                    alt="video thumbnail"
+                                    width={500}
+                                    height={500}
+                                  />
+                                  <p className="bold size-10 w-full">{videoItem.video?.description?.channelTitle}</p>
                                 </HoverCardContent>
                               </AspectRatio>
                             </HoverCard>
@@ -149,13 +187,12 @@ export function Dashboard() {
                           height={100}
                         />
                         <div className="space-y-2">
-                          <p className="h-4"> Hi {user.name}!</p>
+                          <p className="h-4"> Hi {user?.name}!</p>
                           <Badge variant="outline">AI Architect</Badge>
                         </div>
                       </div>
                     </CardHeader>
                   </Card>
-
                   <Card className="w-full h-[30%] lg:col-span-2">
                     <CardHeader>
                       <CardTitle>Streaks</CardTitle>
@@ -186,18 +223,17 @@ export function Dashboard() {
                       />
                     </CardContent>
                   </Card>
-
                   <Card className="w-full h-[60%] lg:col-span-3">
                     <CardHeader>
                       <CardTitle>Notes</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <ScrollArea className="h-[35vh]">
-                        <div dangerouslySetInnerHTML={{ __html: markdownToHtml((profile as { notes?: string[] })?.notes?.[0]?.notes) }}></div>
+                        <div dangerouslySetInnerHTML={renderNotesHtml()}></div>
                       </ScrollArea>
                     </CardContent>
                     <CardFooter>
-                      <Badge variant="outline">By Krish Naiks's Python Video</Badge>
+                      <Badge variant="outline">{"By Krish Naiks's Python Video"}</Badge>
                     </CardFooter>
                   </Card>
                 </div>
@@ -207,7 +243,6 @@ export function Dashboard() {
         </TooltipProvider>
       </ThemeProvider>
     )
-  );
 }
 
-export default withPageAuthRequired(Dashboard);
+export default Dashboard;
