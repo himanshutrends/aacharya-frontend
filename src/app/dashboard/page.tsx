@@ -112,7 +112,6 @@ function Dashboard() {
   if (error) return <div>{error.message}</div>;
 
   return (
-    user && (
       <ThemeProvider
         attribute="class"
         defaultTheme="system"
@@ -244,7 +243,6 @@ function Dashboard() {
         </TooltipProvider>
       </ThemeProvider>
     )
-  );
 }
 
 export default Dashboard;

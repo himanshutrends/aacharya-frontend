@@ -74,14 +74,19 @@ export const VideoDisplay: React.FC<{ params: { slug: string } }> = ({ params })
 
     const saveToServer = debounce((timestamp: number) => {
         console.log("Saving to server:", timestamp);
+        const token = sessionStorage.getItem('access_token');
         // Axios or fetch to send data to your server
-        axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}dashboard/update_watch_history`, {
-            user: user,
-            video_id: params?.slug,
-            timestamp: timestamp
-        });
+        if (user) {
+            axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}dashboard/update_watch_history`, {
+                video_id: params?.slug,
+                timestamp: timestamp
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        )}
     }, 1000); // Debounce time in milliseconds
-
 
     // Clear the interval when the component unmounts
     useEffect(() => {

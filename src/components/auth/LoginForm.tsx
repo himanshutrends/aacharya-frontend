@@ -12,6 +12,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useUser } from "@/context/User";
+
 
 export default function LoginForm() {
   const [user, setUser] = useState({ email: "", password: "" });
@@ -19,6 +21,8 @@ export default function LoginForm() {
 
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  const { login } = useUser();
 
   useEffect(() => {
     const token = searchParams.get('token');
@@ -36,29 +40,19 @@ export default function LoginForm() {
     setUser((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = async () => {
+    console.log('user', user)
     setLoading(true);
     try {
       if (!user.email || !user.password) {
-        return;
+        alert("Email and password are required");
       }
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      });
-      if (response.status === 200) {
-        const { access_token } = await response.json();
-        sessionStorage.setItem("access_token", access_token);
+      else if (await login(user)) {
+        setUser({ email: "", password: "" });
         router.push("/");
-      } else {
-        const { error } = await response.json();
-        console.error(error);
       }
     } catch (error) {
+      setUser({ email: "", password: "" }); 
       console.error(error);
     } finally {
       setLoading(false);
@@ -85,7 +79,7 @@ export default function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="grid gap-4" onSubmit={handleSubmit}>
+        <div className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -113,16 +107,16 @@ export default function LoginForm() {
               onChange={handleChange} 
               required/>
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="w-full" disabled={loading} onClick={handleSubmit}>
             {loading ? "Logging in..." : "Login"}
           </Button>
           <Button variant="outline" className="w-full" onClick={handleGoogleLogin} disabled={loading}>
             {loading ? "Redirecting..." : "Login with Google"}
           </Button>
-        </form>
+        </div>
         <div className="mt-4 text-center text-sm">
           Don&apos;t have an account?{" "}
-          <Link href="#" className="underline">
+          <Link href="/auth/signup" className="underline">
             Sign up
           </Link>
         </div>

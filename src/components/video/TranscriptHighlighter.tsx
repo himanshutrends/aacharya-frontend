@@ -18,7 +18,7 @@ import { useTime } from '@/context/TimeContext';
 import { useUser } from '@/context/User';
 
 const TranscriptHighlighter: React.FC<TranscriptHighlighterProps> = ({ params }) => {
-    const [transcript, setTranscript] = useState<TranscriptSegment[]>([]);
+    const [transcript, setTranscript] = useState<TranscriptSegment[] | null>(null);
     const transcriptRef = useRef<HTMLDivElement>(null);
     const [activeIndex, setActiveIndex] = useState<number | null>(null); // Store active word index
 
@@ -29,8 +29,11 @@ const TranscriptHighlighter: React.FC<TranscriptHighlighterProps> = ({ params })
     const fetchTranscript = async (videoId: string) => {
         if(user){
             try {
-                const response = await axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/transcript?q=${videoId}/`, {
-                    user: user
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/transcript?q=${videoId}/`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${sessionStorage.getItem('access_token')}`
+                    }
                 });
                 const data = response.data;
                 setTranscript(data);
@@ -49,6 +52,9 @@ const TranscriptHighlighter: React.FC<TranscriptHighlighterProps> = ({ params })
 
     // Scroll to the active segment in the transcript
     useEffect(() => {
+        if (!transcript) {
+            return;
+        }
         transcript.some((segment, segmentIndex) => {
             const words = segment.text.split(' ');
             const wordDuration = segment.duration / words.length;
