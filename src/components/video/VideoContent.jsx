@@ -63,14 +63,14 @@ export const VideoDisplay = ({ params }) => {
         const token = sessionStorage.getItem('access_token');
         // Axios or fetch to send data to your server
         if (user) {
-            axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}dashboard/update_watch_history`, {
-                video_id: params?.slug,
-                timestamp: timestamp
-            }, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            // axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}dashboard/update_watch_history`, {
+            //     video_id: params?.slug,
+            //     timestamp: timestamp
+            // }, {
+            //     headers: {
+            //         Authorization: `Bearer ${token}`
+            //     }
+            // });
         }
     }, 1000); // Debounce time in milliseconds
 
