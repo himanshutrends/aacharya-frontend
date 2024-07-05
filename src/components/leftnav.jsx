@@ -7,16 +7,10 @@ import { useRouter } from 'next/navigation';
 import { useUser } from "@/context/User";
 function LeftNav() {
     const router = useRouter();
-    const { user, logout } = useUser();
+    const { logout, loading, error } = useUser();
     const handleLogout = async () => {
-        try {
-            logout();
-            router.push("auth/login");
-            console.log("Logged out");
-        }
-        catch (error) {
-            console.error(error);
-        }
+      logout();
+      if (!loading && !error.status) router.push("auth/login")
     };
     return (<div className="flex flex-col justify-between h-full">
       <nav className="grid gap-1 p-2">

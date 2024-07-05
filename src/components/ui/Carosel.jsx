@@ -15,8 +15,7 @@ export default function CarouselDemo() {
               </Card>
             </div>
           </CarouselItem>
-          {/*  */}
-
+          {/**/}
           <CarouselItem key={1}>
             <div className="p-1">
               <Card>

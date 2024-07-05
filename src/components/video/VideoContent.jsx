@@ -32,6 +32,7 @@ export const VideoDisplay = ({ params }) => {
             }
         }
     };
+    
     // Load the YouTube iframe API script
     useEffect(() => {
         const existingScript = document.getElementById('youtube-iframe-script');
@@ -56,6 +57,7 @@ export const VideoDisplay = ({ params }) => {
             window.onYouTubeIframeAPIReady = null;
         };
     }, [onPlayerStateChange, params.slug, playerRef]);
+
     const saveToServer = debounce((timestamp) => {
         console.log("Saving to server:", timestamp);
         const token = sessionStorage.getItem('access_token');
@@ -71,18 +73,21 @@ export const VideoDisplay = ({ params }) => {
             });
         }
     }, 1000); // Debounce time in milliseconds
+
     // Clear the interval when the component unmounts
     useEffect(() => {
         return () => {
             intervalRef.current && clearInterval(intervalRef.current);
         };
     }, []);
+
     const handleSummarize = () => {
         const summary = axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/summarize?q=${params.slug}`, {
             user: user,
             conversation: conversation
         });
     };
+
     return (<div className="relative hidden flex-col items-start gap-8 md:flex">
             <AspectRatio ratio={16 / 9}>
                 <div className="w-[100%] h-[100%] rounded-[10px]" id="youtube-player"/>

@@ -15,6 +15,9 @@ import { TimeProvider } from "@/context/TimeContext";
 import { ConversationProvider } from "@/context/ConversationContext";
 import { VideoControlProvider } from '@/context/VideoControl';
 import { ThemeProvider } from "@/components/themeprovider";
+// auth
+import isAuthenticated from '@/components/auth/isAuthenticated';
+
 const VideoPage = ({ params }) => {
     return (<ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
       <TimeProvider>
@@ -44,4 +47,4 @@ const VideoPage = ({ params }) => {
       </TimeProvider>
     </ThemeProvider>);
 };
-export default VideoPage;
+export default isAuthenticated(VideoPage);

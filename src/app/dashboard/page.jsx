@@ -13,35 +13,44 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import LeftNav from "@/components/leftnav";
 import UpNav from "@/components/upnav";
 import ActivityCalendar from "react-activity-calendar";
-import { useUser } from "@/context/User";
 import { ThemeProvider } from "@/components/themeprovider";
 import Image from 'next/image';
-import axios from 'axios';
 import { remark } from 'remark';
 import remarkHtml from 'remark-html';
+
+import { useUser } from "@/context/User";
+import isAuthenticated from "@/components/auth/isAuthenticated";
+
 function Dashboard() {
-    const { user, error, isLoading } = useUser();
+    const { user, error, loading } = useUser();
     const [profile, setProfile] = React.useState(null);
-    const fetchProfile = useCallback(async () => {
+
+    useEffect(() => {
+      (async () => {
         try {
-            console.log(user);
-            if (user) {
-                const response = await axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}dashboard/`, {
-                    "user": user
-                });
-                setProfile(response.data);
-            }
+          console.log(user);
+          if (user) {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}dashboard/`, {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + user.access_token
+                  }
+              });
+                    
+              const data = await response.json();
+              setProfile(data);
+          }
         }
         catch (error) {
             console.error('Failed to fetch profile:', error);
         }
-    }, [user]);
-    useEffect(() => {
-        fetchProfile();
-    }, [fetchProfile]);
+      })();
+    }, [ loading]);
+    
     const markdownToHtml = (markdown) => {
         return remark().use(remarkHtml).processSync(markdown).toString();
     };
+    
     const renderNotesHtml = () => {
         if (!profile || !profile.notes || profile.notes.length === 0) {
             return { __html: '<p>No notes available.</p>' }; // Default message when no notes are found
@@ -49,10 +58,12 @@ function Dashboard() {
         const firstNoteContent = profile.notes[0].notes; // Safely accessed
         return { __html: markdownToHtml(firstNoteContent) };
     };
-    if (isLoading)
-        return <div>Loading...</div>;
-    if (error)
-        return <div>{error.message}</div>;
+    if (loading)
+      return <div>Loading...</div>;
+    
+    if (error.status)
+      console.error(error);
+
     return (<ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
         <TooltipProvider>
           <div className="grid h-screen w-full pl-[53px]">
@@ -155,4 +166,5 @@ function Dashboard() {
         </TooltipProvider>
       </ThemeProvider>);
 }
-export default Dashboard;
+
+export default isAuthenticated(Dashboard);

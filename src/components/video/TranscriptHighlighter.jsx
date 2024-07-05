@@ -8,30 +8,34 @@ const TranscriptHighlighter = ({ params }) => {
     const transcriptRef = useRef(null);
     const [activeIndex, setActiveIndex] = useState(null); // Store active word index
     const { currentTime } = useTime();
-    const { user } = useUser();
-    const fetchTranscript = async (videoId) => {
-        if (user) {
-            try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/transcript?q=${videoId}/`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${sessionStorage.getItem('access_token')}`
-                    }
-                });
-                const data = response.data;
-                setTranscript(data);
-            }
-            catch (error) {
-                console.error('Failed to fetch transcript:', error);
-            }
-        }
-    };
+    const { user, loading, setLoading, error, setError } = useUser();
+
     // Fetch the transcript data
     useEffect(() => {
-        if (params.slug) {
-            fetchTranscript(params.slug);
-        }
-    }, [params.slug, fetchTranscript]);
+        (async () => {
+            if (user && params.slug) {
+                try {
+                    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/transcript?q=${params.slug}`, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + user.access_token
+                        }
+                    });
+                    const data = response.data;
+                    setTranscript(data);
+                } catch (error) {
+                    setError({
+                        message: error.message,
+                        status: true
+                    });
+                    console.error('Failed to fetch transcript:', error);
+                } finally {
+                    setLoading(false);
+                }
+            }
+        })()
+    }, [params.slug, loading])
+
     // Scroll to the active segment in the transcript
     useEffect(() => {
         if (!transcript) {
@@ -64,24 +68,28 @@ const TranscriptHighlighter = ({ params }) => {
             }
         }
     }, [activeIndex]);
+
+    if (loading) {
+        return <div>Loading transcript...</div>;
+    }
     return (<div ref={transcriptRef}>
-            {transcript && transcript.map((segment, segmentIndex) => {
+        {transcript && transcript.map((segment, segmentIndex) => {
             const words = segment.text.split(' ');
             const wordDuration = segment.duration / words.length;
             return (<div key={segmentIndex}>
-                        {words.map((word, wordIndex) => {
+                {words.map((word, wordIndex) => {
                     const wordStartTime = segment.start + wordIndex * wordDuration;
                     const isHighlighted = currentTime >= wordStartTime;
                     return (<span key={wordIndex} style={{
-                            backgroundColor: isHighlighted ? 'skyBlue' : 'transparent',
-                            transition: 'background-color 300ms ease-in-out',
-                            whiteSpace: 'nowrap'
-                        }}>
-                                    {word + ' '}
-                                </span>);
+                        backgroundColor: isHighlighted ? 'skyBlue' : 'transparent',
+                        transition: 'background-color 300ms ease-in-out',
+                        whiteSpace: 'nowrap'
+                    }}>
+                        {word + ' '}
+                    </span>);
                 })}
-                    </div>);
+            </div>);
         })}
-        </div>);
+    </div>);
 };
 export default TranscriptHighlighter;

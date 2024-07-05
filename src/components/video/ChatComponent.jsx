@@ -19,13 +19,18 @@ export const ChatComponents = ({ params }) => {
     // Array of objects with message and isUser properties
     const { conversation, setConversation } = useConversation();
     const { currentTime } = useTime();
+
     const getResponse = async (message) => {
         try {
             // Make a POST request to the chatbot API
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/ask?q=${params.slug}`, {
                 message,
                 timestamp: currentTime,
-                user: user
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + user.access_token
+                }
             });
             const data = response.data;
             return data['response'];
@@ -68,6 +73,7 @@ export const ChatComponents = ({ params }) => {
         </div>);
 };
 const parseMessage = (message) => {
+    console.log('Message to be parsed:', message);
     // Updated regex to match decimal numbers inside brackets
     const timestampRegex = /\[(\d+\.\d+)\]/g;
     const { seekTo } = UseVideoControl();
@@ -79,6 +85,7 @@ const parseMessage = (message) => {
                     [{index}]
                 </Button>);
         }
+        console.log('Part:', part);
         return part;
     });
 };
