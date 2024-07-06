@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useCallback, useState } from "react";
 import data from "./data";
-import { Triangle } from "lucide-react";
+import { Car, Triangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -99,7 +99,7 @@ function Dashboard() {
 
             <main className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-1 lg:grid-cols-3">
               <div
-                className="relative hidden flex-col items-start gap-8 md:flex lg:col-span-2"
+                className="relative h-full hidden flex-col items-start gap-4 md:flex lg:col-span-2"
                 x-chunk="dashboard-03-chunk-0"
               >
                 <Card className="w-full h-full">
@@ -147,6 +147,42 @@ function Dashboard() {
                         </Card>
                       </CardContent>
                     ))}
+                </Card>
+                <Card className="w-full">
+                  <CardHeader>
+                    <CardTitle>Recommended Videos</CardTitle>
+                    <CardDescription>
+                      What to watch next? Watch these videos to complete your path.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center overflow-x-scroll space-x-4">
+                      <div className="w-80 rounded" >
+                        <a href="video">
+                          <img src="https://i.ytimg.com/vi/ENWiSStnYto/maxresdefault.jpg" className="rounded-lg object-contain" />
+                          <p className="font-medium text-lg">Hello fortuner</p>
+                        </a>
+                      </div>
+                      <div className="w-80 rounded" >
+                        <a href="video">
+                          <img src="https://i.ytimg.com/vi/ENWiSStnYto/maxresdefault.jpg" className="rounded-lg object-contain" />
+                          <p className="font-medium text-lg">Hello fortuner</p>
+                        </a>
+                      </div>
+                      <div className="w-80 rounded" >
+                        <a href="video">
+                          <img src="https://i.ytimg.com/vi/ENWiSStnYto/maxresdefault.jpg" className="rounded-lg object-contain" />
+                          <p className="font-medium text-lg">Hello fortuner</p>
+                        </a>
+                      </div>
+                      <div className="w-80 rounded" >
+                        <a href="video">
+                          <img src="https://i.ytimg.com/vi/ENWiSStnYto/maxresdefault.jpg" className="rounded-lg object-contain" />
+                          <p className="font-medium text-lg">Hello fortuner</p>
+                        </a>
+                      </div>
+                    </div>
+                  </CardContent>
                 </Card>
               </div>
               <div className="relative flex h-full min-h-[50vh] flex-col rounded-xl bg-muted/50 gap-5">
