@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState, use } from "react";
 import data from "./data";
 import { Car, Triangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import Link from "next/link";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import LeftNav from "@/components/leftnav";
 import UpNav from "@/components/upnav";
@@ -29,6 +30,9 @@ import remarkHtml from "remark-html";
 import isAuthenticated from "@/components/auth/isAuthenticated";
 import { useUser } from "@/context/User";
 import Notes from "@/components/dashboard/Notes";
+
+//import image
+import  useProfile  from "@/assets/images/user_profile.jpg";
 
 function Dashboard() {
   const { user, error, isLoading } = useUser();
@@ -71,6 +75,8 @@ function Dashboard() {
   const markdownToHtml = (markdown) => {
     return { __html: remark().use(remarkHtml).processSync(markdown).toString() };
   };
+
+  console.log(useProfile);
 
   if (isLoading) return <div>Loading...</div>;
   if (error?.status) return <div>{error.message}</div>;
@@ -158,27 +164,27 @@ function Dashboard() {
                   <CardContent>
                     <div className="flex items-center overflow-x-scroll space-x-4">
                       <div className="w-80 rounded" >
+                        <Link href="/video/rHux0gMZ3Eg">
+                          <img src="https://i.ytimg.com/vi/rHux0gMZ3Eg/maxresdefault.jpg" className="rounded-lg object-contain" />
+                          <p className="font-medium text-lg">Python Django Tutorial for Beginners</p>
+                        </Link>
+                      </div>
+                      <div className="w-80 rounded" >
                         <a href="video">
-                          <img src="https://i.ytimg.com/vi/ENWiSStnYto/maxresdefault.jpg" className="rounded-lg object-contain" />
-                          <p className="font-medium text-lg">Hello fortuner</p>
+                          <img src="https://i.ytimg.com/vi/erEgovG9WBs/maxresdefault.jpg" className="rounded-lg object-contain" />
+                          <p className="font-medium text-lg">100+ Web Development Things you Should Know</p>
                         </a>
                       </div>
                       <div className="w-80 rounded" >
                         <a href="video">
-                          <img src="https://i.ytimg.com/vi/ENWiSStnYto/maxresdefault.jpg" className="rounded-lg object-contain" />
-                          <p className="font-medium text-lg">Hello fortuner</p>
+                          <img src="https://i.ytimg.com/vi/30LWjhZzg50/maxresdefault.jpg" className="rounded-lg object-contain" />
+                          <p className="font-medium text-lg">Learn TypeScript – Full Tutorial</p>
                         </a>
                       </div>
                       <div className="w-80 rounded" >
                         <a href="video">
-                          <img src="https://i.ytimg.com/vi/ENWiSStnYto/maxresdefault.jpg" className="rounded-lg object-contain" />
-                          <p className="font-medium text-lg">Hello fortuner</p>
-                        </a>
-                      </div>
-                      <div className="w-80 rounded" >
-                        <a href="video">
-                          <img src="https://i.ytimg.com/vi/ENWiSStnYto/maxresdefault.jpg" className="rounded-lg object-contain" />
-                          <p className="font-medium text-lg">Hello fortuner</p>
+                          <img src="https://i.ytimg.com/vi/BBpAmxU_NQo/maxresdefault.jpg" className="rounded-lg object-contain" />
+                          <p className="font-medium text-lg">Data Structures and Algorithms for Beginners</p>
                         </a>
                       </div>
                     </div>
@@ -189,15 +195,15 @@ function Dashboard() {
                 <Card className="w-full h-[10%] lg:col-span-1">
                   <CardHeader>
                     <div className="flex items-center space-x-4">
-                      {user?.picture && (
-                        <Image
-                          src={user.picture}
-                          className="h-12 w-12 rounded-full"
-                          alt="user profile"
-                          width={100}
-                          height={100}
-                        />
-                      )}
+                      
+                      <Image
+                        src={user?.picture || useProfile.src}
+                        className="h-12 w-12 rounded-full"
+                        alt="user profile"
+                        width={100}
+                        height={100}
+                      />
+                    
                       <div className="space-y-2">
                         <p className="h-4"> Hi {user?.name}!</p>
                         <Badge variant="outline">AI Architect</Badge>
