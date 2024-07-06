@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Triangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import LeftNav from "@/components/leftnav";
 import UpNav from "@/components/upnav";
@@ -9,17 +11,33 @@ import { ThemeProvider } from "@/components/themeprovider";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
-import Image from "next/image";
+import isAuthenticated from "@/components/auth/isAuthenticated";
 import { useUser } from "@/context/User";
+
 function HomeSearch() {
   const { user } = useUser();
   const param = useSearchParams();
+
+  const [params, setParams] = useState({ search: param.get("search") });
   const [videos, setVideos] = useState([]);
+  
+  const handleChange = (e) => {
+    setParams({ [e.target.name]: e.target.value });
+  }
+
+  const handleSerch = () => {
+    if (params.search) {
+      // parse space to %20
+      const search = params.search.replace(/ /g, "%20")
+      window.location.href = `/home?search=${search}`;
+    }
+  }
+
   useEffect(() => {
     (async () => {
       if (user) {
-        const q = param.get("q");
+        const q = param.get("search");
+        console.log(q);
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_API_DOMAIN}?q=${q}`,
           {
@@ -33,6 +51,7 @@ function HomeSearch() {
       }
     })();
   }, [user]);
+
   return (
     <ThemeProvider
       attribute="class"
@@ -58,6 +77,13 @@ function HomeSearch() {
               <h1 className="font-bold text-3xl mb-16">
                 Search Results from Youtube
               </h1>
+              <div className="m-5 lg:mt-8 flex flex-col sm:items-center gap-2 sm:flex-row sm:gap-3">
+                <div className="w-full max-w-lg  lg:w-auto">
+                  <Label className="sr-only">Search</Label>
+                  <Input placeholder="Search" type="text" name="search" value={params.search} onChange={handleChange} className="w-full" />
+                </div>
+                <Button className="w-min" onClick={handleSerch}>Search</Button>
+              </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-10">
                 {videos && videos.map((item, index) => (<div className="w-80 rounded" key={index}>
                         <Link href={`/video/${item.video_id}`} key={index}>
@@ -95,4 +121,4 @@ function HomeSearch() {
     </ThemeProvider>
   );
 }
-export default HomeSearch;
+export default isAuthenticated(HomeSearch)
