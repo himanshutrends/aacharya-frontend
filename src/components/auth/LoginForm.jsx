@@ -5,48 +5,28 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useUser } from "@/context/User";
 export default function LoginForm() {
-    const [user, setUser] = useState({ email: "", password: "" });
-    const [loading, setLoading] = useState(false);
-    const searchParams = useSearchParams();
-    const router = useRouter();
-    const { login } = useUser();
-    useEffect(() => {
-        const token = searchParams.get('token');
-        if (token) {
-            sessionStorage.setItem("access_token", token);
-            router.push('/');
-        }
-        else if (sessionStorage.getItem('access_token')) {
-            router.push('/');
-        }
-    }, [searchParams, router]);
+    const [user, setUser] = useState({ email: "", password: "" })
+    const { login, loading, setLoading, error } = useUser()
+    const router = useRouter()
+    
     const handleChange = (event) => {
         const { name, value } = event.target;
         setUser((prev) => ({ ...prev, [name]: value }));
     };
+    
     const handleSubmit = async () => {
-        console.log('user', user);
-        setLoading(true);
-        try {
-            if (!user.email || !user.password) {
-                alert("Email and password are required");
-            }
-            else if (await login(user)) {
-                setUser({ email: "", password: "" });
-                router.push("/");
-            }
-        }
-        catch (error) {
-            setUser({ email: "", password: "" });
-            console.error(error);
-        }
-        finally {
-            setLoading(false);
-        }
+      if (!user.email || !user.password) {
+          alert("Email and password are required");
+      }
+      login(user)
+      if(!loading && !error.status){
+        router.push("/");
+      }
     };
+
     const handleGoogleLogin = async () => {
         setLoading(true);
         try {
@@ -59,6 +39,7 @@ export default function LoginForm() {
             setLoading(false);
         }
     };
+
     return (<Card className="mx-auto max-w-sm">
       <CardHeader>
         <CardTitle className="text-2xl">Login</CardTitle>

@@ -11,21 +11,27 @@ import { useConversation } from '@/context/ConversationContext';
 import { UseVideoControl } from '@/context/VideoControl';
 import { useUser } from '@/context/User';
 import axios from 'axios';
-import { remark } from 'remark';
-import remarkHtml from 'remark-html';
+import Markdown from 'markdown-to-jsx';
+import { compiler } from 'markdown-to-jsx'
+
 export const ChatComponents = ({ params }) => {
     const [message, setMessage] = useState('');
     const { user } = useUser();
     // Array of objects with message and isUser properties
     const { conversation, setConversation } = useConversation();
     const { currentTime } = useTime();
+
     const getResponse = async (message) => {
         try {
             // Make a POST request to the chatbot API
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/ask?q=${params.slug}`, {
                 message,
                 timestamp: currentTime,
-                user: user
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + user.access_token
+                }
             });
             const data = response.data;
             return data['response'];
@@ -67,34 +73,51 @@ export const ChatComponents = ({ params }) => {
             </form>
         </div>);
 };
-const parseMessage = (message) => {
-    // Updated regex to match decimal numbers inside brackets
-    const timestampRegex = /\[(\d+\.\d+)\]/g;
+
+const ChatMessage = ({ message, isUser }) => {
     const { seekTo } = UseVideoControl();
-    // Splitting message and creating clickable buttons for timestamps
-    return message.split(timestampRegex).map((part, index) => {
-        // Checking if this is a decimal number part
-        if (index % 2 === 1) {
-            return (<Button key={index} onClick={() => seekTo(parseFloat(part))} className="text-blue-500">
-                    [{index}]
-                </Button>);
-        }
-        return part;
-    });
-};
-const ChatMessage = ({ message, isUser, }) => {
-    const markdownToHtml = (markdown) => {
-        return remark().use(remarkHtml).processSync(markdown).toString();
-    };
-    return (<div className={`flex flex-col gap-2 items-start`}>
+
+    const parseMessage = (message) => {
+        const timestampRegex = /\[(\d+\.\d+)\]/g;
+
+        // Function to replace timestamps with buttons
+        const replaceTimestamps = (text) => {
+            return text.split(timestampRegex).map((part, index) => {
+                if (timestampRegex.test(part)) {
+                    const timestamp = parseFloat(part.replace(/\[|\]/g, ''));
+                    return (
+                        <button
+                            key={index}
+                            onClick={() => seekTo(timestamp)}
+                            className="text-blue-500"
+                        >
+                            [{timestamp}]
+                        </button>
+                    );
+                }
+                return part;
+            });
+        };
+        console.log(compiler(message), compiler(message).props.children)
+        // Convert Markdown to JSX and parse for timestamps
+        return (replaceTimestamps(compiler(message).props.children))
+    }
+
+    return (
+        <div className={`flex flex-col gap-2 items-start`}>
             <div className={`gap-1.5 flex flex-row`}>
                 <Badge className='max-h-6 min-w-12' variant="secondary">{isUser ? "User" : "Bot"}</Badge>
                 <Card className="p-2">
-                    <div dangerouslySetInnerHTML={{ __html: parseMessage(markdownToHtml(message)) }}></div>
+                    <Markdown options={{ disableParsingRawHTML: true }}>
+                        {message}
+                    </Markdown>
                 </Card>
             </div>
-        </div>);
+        </div>
+    );
 };
+
+
 const TooltipTriggerAndContent = ({ handleSendMessage }) => {
     return (<div className="flex items-center p-3 pt-0">
             <Tooltip>
