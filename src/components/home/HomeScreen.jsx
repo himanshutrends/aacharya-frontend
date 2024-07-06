@@ -91,7 +91,7 @@ function HomeSearch() {
                           <p className="font-medium text-lg">{item.title}</p>
                         </Link>
                       </div>))}
-
+                <img src="https://i.ytimg.com/vi/1X7fzv6l9G0/1.jpg" className="rounded-lg object-contain" alt="title" />
                 {/* Loading Effect Here edit */}
                 {/* <div className="animate-pulse space-y-3">
                   <div className="bg-slate-300 h-[180px] w-[320px] rounded-xl" />
