@@ -21,7 +21,7 @@ const SummarizeButton = memo(({ loading, handleSummarize }) => {
     );
 });
 
-export const VideoDisplay = ({ params }) => {
+const VideoDisplay = ({ params }) => {
     const transcriptRef = useRef(null);
     const { playerRef } = UseVideoControl();
     const intervalRef = useRef(null);
@@ -125,3 +125,6 @@ export const VideoDisplay = ({ params }) => {
         </div>
     </div>);
 };
+
+VideoDisplay.displayName = "VideoDisplay";
+export default VideoDisplay;

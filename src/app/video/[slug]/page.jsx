@@ -8,7 +8,7 @@ import { GraduationCap, } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TooltipProvider, } from "@/components/ui/tooltip";
 // video components
-import { VideoDisplay } from "@/components/video/VideoContent";
+import VideoDisplay from "@/components/video/VideoContent";
 import { ChatComponents } from "@/components/video/ChatComponent";
 // context
 import { TimeProvider } from "@/context/TimeContext";
@@ -16,7 +16,7 @@ import { ConversationProvider } from "@/context/ConversationContext";
 import { VideoControlProvider } from '@/context/VideoControl';
 import { ThemeProvider } from "@/components/themeprovider";
 // auth
-import isAuthenticated from '@/components/auth/isAuthenticated';
+import { isAuthenticated } from '@/components/auth/isAuthenticated';
 
 const VideoPage = ({ params }) => {
     return (<ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>

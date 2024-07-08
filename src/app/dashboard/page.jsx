@@ -1,43 +1,47 @@
 "use client";
-import React, { useEffect, useCallback, useState, use } from "react";
-import data from "./data";
-import { Car, Triangle } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { TooltipProvider } from "@/components/ui/tooltip";
+// react
+import React, { useEffect, useCallback, useState } from "react"
+import data from "./data"
+// components
+import Link from "next/link"
+import Image from "next/image"
+import { remark } from "remark"
+import remarkHtml from "remark-html"
+import UpNav from "@/components/upnav"
+import { Triangle } from "lucide-react"
+import LeftNav from "@/components/leftnav"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import ActivityCalendar from "react-activity-calendar"
+import { TooltipProvider } from "@/components/ui/tooltip"
+import { ThemeProvider } from "@/components/themeprovider"
+import { AspectRatio } from "@/components/ui/aspect-ratio"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/card"
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import Link from "next/link";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import LeftNav from "@/components/leftnav";
-import UpNav from "@/components/upnav";
-import ActivityCalendar from "react-activity-calendar";
-import { ThemeProvider } from "@/components/themeprovider";
-import Image from "next/image";
-import axios from "axios";
-import { remark } from "remark";
-import remarkHtml from "remark-html";
-import isAuthenticated from "@/components/auth/isAuthenticated";
-import { useUser } from "@/context/User";
-import Notes from "@/components/dashboard/Notes";
-
-//import image
-import  useProfile  from "@/assets/images/user_profile.jpg";
+} from "@/components/ui/hover-card"
+// lib
+import axios from "axios"
+// react components
+import Notes from "@/components/dashboard/Notes"
+import { isAuthenticated } from "@/components/auth/isAuthenticated"
+// import image
+import  useProfile  from "@/assets/images/user_profile.jpg"
+// context
+import { useUser } from "@/context/User"
 
 function Dashboard() {
-  const { user, error, isLoading } = useUser();
+  const { user, error, loading } = useUser();
   const [watchHistory, setWatchHistory] = useState(null);
-  const [focusedNote, setFocusedNote] = useState({ __html: '<p>some raw html</p>' });
+  const [focusedNote, setFocusedNote] = useState("Click on a video to view notes");
   const [title, setTitle] = useState("Anonymous");
 
   const fetchProfile = useCallback(async () => {
@@ -64,21 +68,15 @@ function Dashboard() {
   }, [fetchProfile]);
 
   const handleVideoClick = (note, title) => {
-    if (!note) {
-      setFocusedNote({ __html: '<p>some raw html</p>' });
+    if (!note?.notes) {
+      setFocusedNote("No notes available");
     } else {
-      setFocusedNote(markdownToHtml(note.notes));
+      setFocusedNote(note.notes);
     }
     setTitle(title);
   };
 
-  const markdownToHtml = (markdown) => {
-    return { __html: remark().use(remarkHtml).processSync(markdown).toString() };
-  };
-
-  console.log(useProfile);
-
-  if (isLoading) return <div>Loading...</div>;
+  if (loading) return <div>Loading...</div>;
   if (error?.status) return <div>{error.message}</div>;
 
   return (
@@ -165,27 +163,47 @@ function Dashboard() {
                     <div className="flex items-center overflow-x-scroll space-x-4">
                       <div className="w-80 rounded" >
                         <Link href="/video/rHux0gMZ3Eg">
-                          <img src="https://i.ytimg.com/vi/rHux0gMZ3Eg/maxresdefault.jpg" className="rounded-lg object-contain" />
+                          <Image 
+                            src="https://i.ytimg.com/vi/rHux0gMZ3Eg/maxresdefault.jpg" 
+                            className="rounded-lg object-contain"
+                            width={500}
+                            height={500}  
+                          />
                           <p className="font-medium text-lg">Python Django Tutorial for Beginners</p>
                         </Link>
                       </div>
                       <div className="w-80 rounded" >
-                        <a href="video">
-                          <img src="https://i.ytimg.com/vi/erEgovG9WBs/maxresdefault.jpg" className="rounded-lg object-contain" />
+                        <Link href="/video/erEgovG9WBs">
+                          <Image 
+                            src="https://i.ytimg.com/vi/erEgovG9WBs/maxresdefault.jpg" 
+                            className="rounded-lg object-contain"
+                            width={500}
+                            height={500}
+                          />
                           <p className="font-medium text-lg">100+ Web Development Things you Should Know</p>
-                        </a>
+                        </Link>
                       </div>
                       <div className="w-80 rounded" >
-                        <a href="video">
-                          <img src="https://i.ytimg.com/vi/30LWjhZzg50/maxresdefault.jpg" className="rounded-lg object-contain" />
+                        <Link href="/video/30LWjhZzg50">
+                          <Image 
+                            src="https://i.ytimg.com/vi/30LWjhZzg50/maxresdefault.jpg" 
+                            className="rounded-lg object-contain" 
+                            width={500}
+                            height={500}
+                          />
                           <p className="font-medium text-lg">Learn TypeScript – Full Tutorial</p>
-                        </a>
+                        </Link>
                       </div>
                       <div className="w-80 rounded" >
-                        <a href="video">
-                          <img src="https://i.ytimg.com/vi/BBpAmxU_NQo/maxresdefault.jpg" className="rounded-lg object-contain" />
+                        <Link href="/video/BBpAmxU_NQo">
+                          <Image 
+                            src="https://i.ytimg.com/vi/BBpAmxU_NQo/maxresdefault.jpg" 
+                            className="rounded-lg object-contain"
+                            width={500}
+                            height={500}
+                          />
                           <p className="font-medium text-lg">Data Structures and Algorithms for Beginners</p>
-                        </a>
+                        </Link>
                       </div>
                     </div>
                   </CardContent>
@@ -194,8 +212,7 @@ function Dashboard() {
               <div className="relative flex h-full min-h-[50vh] flex-col rounded-xl bg-muted/50 gap-5">
                 <Card className="w-full h-[10%] lg:col-span-1">
                   <CardHeader>
-                    <div className="flex items-center space-x-4">
-                      
+                    <div className="flex items-center space-x-4">   
                       <Image
                         src={user?.picture || useProfile.src}
                         className="h-12 w-12 rounded-full"
@@ -203,7 +220,6 @@ function Dashboard() {
                         width={100}
                         height={100}
                       />
-                    
                       <div className="space-y-2">
                         <p className="h-4"> Hi {user?.name}!</p>
                         <Badge variant="outline">AI Architect</Badge>
@@ -222,26 +238,10 @@ function Dashboard() {
                       blockRadius={3}
                       blockMargin={2}
                       fontSize={16}
-                      theme={{
-                        light: [
-                          "#86efac",
-                          "#4ade80",
-                          "#22c55e",
-                          "#16a34a",
-                          "#15803d",
-                        ],
-                        dark: [
-                          "#86efac",
-                          "#4ade80",
-                          "#22c55e",
-                          "#16a34a",
-                          "#15803d",
-                        ],
-                      }}
                     />
                   </CardContent>
                 </Card>
-                <Notes focusedNote={focusedNote} title={title} /> {/* Render the Notes component */}
+                <Notes focusedNote={focusedNote} title={title} />
               </div>
             </main>
           </div>
@@ -251,4 +251,5 @@ function Dashboard() {
   );
 }
 
+Dashboard.displayName = 'Dashboard';
 export default isAuthenticated(Dashboard);

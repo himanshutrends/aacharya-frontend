@@ -12,7 +12,6 @@ import { UseVideoControl } from '@/context/VideoControl';
 import { useUser } from '@/context/User';
 import axios from 'axios';
 import Markdown from 'markdown-to-jsx';
-import { compiler } from 'markdown-to-jsx'
 
 export const ChatComponents = ({ params }) => {
     const [message, setMessage] = useState('');
@@ -74,33 +73,31 @@ export const ChatComponents = ({ params }) => {
         </div>);
 };
 
+const CoustomButton = ({ onClickFn, timestamp }) => {
+    return <Button size="sm" onClick={() => onClickFn(timestamp)}>{Number(timestamp) | 0}</Button>;
+};
+
+
 const ChatMessage = ({ message, isUser }) => {
     const { seekTo } = UseVideoControl();
-
+    
     const parseMessage = (message) => {
-        const timestampRegex = /\[(\d+\.\d+)\]/g;
+        const timestampRegex = /(\[\d+\.\d+\])/g;
 
         // Function to replace timestamps with buttons
         const replaceTimestamps = (text) => {
             return text.split(timestampRegex).map((part, index) => {
                 if (timestampRegex.test(part)) {
-                    const timestamp = parseFloat(part.replace(/\[|\]/g, ''));
-                    return (
-                        <button
-                            key={index}
-                            onClick={() => seekTo(timestamp)}
-                            className="text-blue-500"
-                        >
-                            [{timestamp}]
-                        </button>
-                    );
+                    const timestamp = part.replace(/\[|\]/g, '');
+                    return `<CoustomButton timestamp={${Number(timestamp)}} />`
                 }
                 return part;
             });
         };
-        console.log(compiler(message), compiler(message).props.children)
-        // Convert Markdown to JSX and parse for timestamps
-        return (replaceTimestamps(compiler(message).props.children))
+
+        // Replace timestamps with buttons
+        const parts = replaceTimestamps(message);
+        return parts.join('');
     }
 
     return (
@@ -108,9 +105,20 @@ const ChatMessage = ({ message, isUser }) => {
             <div className={`gap-1.5 flex flex-row`}>
                 <Badge className='max-h-6 min-w-12' variant="secondary">{isUser ? "User" : "Bot"}</Badge>
                 <Card className="p-2">
-                    <Markdown options={{ disableParsingRawHTML: true }}>
-                        {message}
-                    </Markdown>
+                <Markdown
+                    children={parseMessage(message)}
+                    options={{
+                        overrides: {
+                            CoustomButton: {
+                                component: CoustomButton,
+                                props: {
+                                    size: 'sm',
+                                    onClickFn: seekTo,
+                                }
+                            }
+                        }
+                    }}
+                />
                 </Card>
             </div>
         </div>
