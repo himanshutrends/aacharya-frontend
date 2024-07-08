@@ -13,7 +13,7 @@ import { UseVideoControl } from '@/context/VideoControl';
 import { useUser } from '@/context/User';
 import axios from 'axios';
 import Markdown from 'markdown-to-jsx';
-import { compiler } from 'markdown-to-jsx'
+import FlowChartComponent from '@/components/video/FlowChartComponent'
 
 export const ChatComponents = ({ params }) => {
     const [message, setMessage] = useState('');
@@ -60,75 +60,75 @@ export const ChatComponents = ({ params }) => {
     useEffect(() => {
     }, [params.slug, conversation]);
     return (
-      <div className="relative h-full min-h-[50vh] rounded-xl bg-muted/50 p-4 lg:col-span-1">
-        <Tabs defaultValue="chat" className="flex h-full flex-col">
-          <TabsList className='h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground grid w-full grid-cols-2'>
-            <TabsTrigger value="chat" className='inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow'>Chat</TabsTrigger>
-            <TabsTrigger value="visual">Visuals</TabsTrigger>
-          </TabsList>
-          <TabsContent value="chat">
-            <div
-              className="flex-1 gap-2 overflow-auto h-full p-2"
-              style={{ maxHeight: "70vh", overflow: "scroll" }}
-            >
-              {conversation &&
-                conversation.map((item, index) => (
-                  <ChatMessage
-                    key={index}
-                    message={item.message}
-                    isUser={item.isUser}
-                  />
-                ))}
-            </div>
-            
-            <form className="flex-grow-0 relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring">
-              <Label htmlFor="message" className="sr-only">
-                Message
-              </Label>
-              <Textarea
-                id="message"
-                placeholder="Type your message here..."
-                value={message}
-                onChange={handleOnChange}
-                className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0"
-              />
-              <TooltipTriggerAndContent handleSendMessage={handleSendMessage} />
-            </form>
-            
-          </TabsContent>
-          <TabsContent value="visual">Change your password here.</TabsContent>
-        </Tabs>
-      </div>
+        <div className="relative h-full min-h-[50vh] rounded-xl bg-muted/50 p-4 lg:col-span-1">
+            <Tabs defaultValue="visual" className="flex h-full flex-col">
+                <TabsList className='h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground grid w-full grid-cols-2'>
+                    <TabsTrigger value="visual">Visuals</TabsTrigger>
+                    <TabsTrigger value="chat" className='inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow'>Chat</TabsTrigger>
+                </TabsList>
+                <TabsContent value="visual">
+                    <FlowChartComponent />
+                </TabsContent>
+                <TabsContent value="chat">
+                    <div
+                        className="flex-1 gap-2 overflow-auto h-full p-2"
+                        style={{ maxHeight: "70vh", overflow: "scroll" }}
+                    >
+                        {conversation &&
+                            conversation.map((item, index) => (
+                                <ChatMessage
+                                    key={index}
+                                    message={item.message}
+                                    isUser={item.isUser}
+                                />
+                            ))}
+                    </div>
+
+                    <form className="flex-grow-0 relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring">
+                        <Label htmlFor="message" className="sr-only">
+                            Message
+                        </Label>
+                        <Textarea
+                            id="message"
+                            placeholder="Type your message here..."
+                            value={message}
+                            onChange={handleOnChange}
+                            className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0"
+                        />
+                        <TooltipTriggerAndContent handleSendMessage={handleSendMessage} />
+                    </form>
+
+                </TabsContent>
+            </Tabs>
+        </div>
     );
 };
+
+const CoustomButton = ({ onClickFn, timestamp }) => {
+    return <Button size="sm" onClick={() => onClickFn(timestamp)}>{Number(timestamp) | 0}</Button>;
+};
+
 
 const ChatMessage = ({ message, isUser }) => {
     const { seekTo } = UseVideoControl();
 
     const parseMessage = (message) => {
-        const timestampRegex = /\[(\d+\.\d+)\]/g;
+        const timestampRegex = /(\[\d+\.\d+\])/g;
 
         // Function to replace timestamps with buttons
         const replaceTimestamps = (text) => {
             return text.split(timestampRegex).map((part, index) => {
                 if (timestampRegex.test(part)) {
-                    const timestamp = parseFloat(part.replace(/\[|\]/g, ''));
-                    return (
-                        <button
-                            key={index}
-                            onClick={() => seekTo(timestamp)}
-                            className="text-blue-500"
-                        >
-                            [{timestamp}]
-                        </button>
-                    );
+                    const timestamp = part.replace(/\[|\]/g, '');
+                    return `<CoustomButton timestamp={${Number(timestamp)}} />`
                 }
                 return part;
             });
         };
-        console.log(compiler(message), compiler(message).props.children)
-        // Convert Markdown to JSX and parse for timestamps
-        return (replaceTimestamps(compiler(message).props.children))
+
+        // Replace timestamps with buttons
+        const parts = replaceTimestamps(message);
+        return parts.join('');
     }
 
     return (
@@ -136,9 +136,20 @@ const ChatMessage = ({ message, isUser }) => {
             <div className={`gap-1.5 flex flex-row`}>
                 <Badge className='max-h-6 min-w-12' variant="secondary">{isUser ? "User" : "Bot"}</Badge>
                 <Card className="p-2">
-                    <Markdown options={{ disableParsingRawHTML: true }}>
-                        {message}
-                    </Markdown>
+                    <Markdown
+                        children={parseMessage(message)}
+                        options={{
+                            overrides: {
+                                CoustomButton: {
+                                    component: CoustomButton,
+                                    props: {
+                                        size: 'sm',
+                                        onClickFn: seekTo,
+                                    }
+                                }
+                            }
+                        }}
+                    />
                 </Card>
             </div>
         </div>
@@ -148,36 +159,36 @@ const ChatMessage = ({ message, isUser }) => {
 
 const TooltipTriggerAndContent = ({ handleSendMessage }) => {
     return (<div className="flex items-center p-3 pt-0">
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                        <NotebookTabs className="size-4"/>
-                        <span className="sr-only">Add to Notes</span>
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top">Add to Notes</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                        <List className="size-4"/>
-                        <span className="sr-only">Get key points</span>
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top">Get key points</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                        <Mic className="size-4"/>
-                        <span className="sr-only">Use Microphone</span>
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top">Use Microphone</TooltipContent>
-            </Tooltip>
-            <Button size="sm" className="ml-auto gap-1.5" onClick={handleSendMessage}>
-                Send Message
-                <CornerDownLeft className="size-3.5"/>
-            </Button>
-        </div>);
+        <Tooltip>
+            <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon">
+                    <NotebookTabs className="size-4" />
+                    <span className="sr-only">Add to Notes</span>
+                </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">Add to Notes</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+            <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon">
+                    <List className="size-4" />
+                    <span className="sr-only">Get key points</span>
+                </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">Get key points</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+            <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon">
+                    <Mic className="size-4" />
+                    <span className="sr-only">Use Microphone</span>
+                </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">Use Microphone</TooltipContent>
+        </Tooltip>
+        <Button size="sm" className="ml-auto gap-1.5" onClick={handleSendMessage}>
+            Send Message
+            <CornerDownLeft className="size-3.5" />
+        </Button>
+    </div>);
 };

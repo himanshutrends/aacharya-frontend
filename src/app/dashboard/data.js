@@ -2,7 +2,7 @@ const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 const data = [
-    { date: "2024-05-01", count: 15, level: 0 },
+    { date: "2024-05-01", count: 0, level: 4 },
     { date: "2024-05-02", count: getRandomInt(1, 20), level: getRandomInt(0, 4) },
     { date: "2024-05-03", count: getRandomInt(1, 20), level: getRandomInt(0, 4) },
     { date: "2024-05-04", count: getRandomInt(1, 20), level: getRandomInt(0, 4) },

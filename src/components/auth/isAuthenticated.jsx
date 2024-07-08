@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useUser } from '@/context/User';
 import { useRouter } from "next/navigation";
 
-const isAuthenticated = (WrappedComponent) => {
+export const isAuthenticated = (WrappedComponent) => {
     return (props) => {
         const { user, loading, logout } = useUser();
         const router = useRouter();
@@ -17,5 +17,3 @@ const isAuthenticated = (WrappedComponent) => {
         return <WrappedComponent {...props} />;
     };
 };
-
-export default isAuthenticated;
