@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CornerDownLeft, List, Mic, NotebookTabs } from 'lucide-react';
 import { useTime } from '@/context/TimeContext';
 import { useConversation } from '@/context/ConversationContext';
@@ -58,20 +59,47 @@ export const ChatComponents = ({ params }) => {
     };
     useEffect(() => {
     }, [params.slug, conversation]);
-    return (<div className="relative flex h-full min-h-[50vh] flex-col   rounded-xl bg-muted/50 p-4 lg:col-span-1">
-            <Badge variant="outline" className="absolute right-3 top-3">
-                Output
-            </Badge>
-            <div className="flex flex-col gap-2 overflow-auto h-full p-2" style={{ "maxHeight": "70vh", "overflow": "scroll" }}>
-                {conversation && conversation.map((item, index) => (<ChatMessage key={index} message={item.message} isUser={item.isUser}/>))}
+    return (
+      <div className="relative h-full min-h-[50vh] rounded-xl bg-muted/50 p-4 lg:col-span-1">
+        <Tabs defaultValue="chat" className="flex h-full flex-col">
+          <TabsList className='h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground grid w-full grid-cols-2'>
+            <TabsTrigger value="chat" className='inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow'>Chat</TabsTrigger>
+            <TabsTrigger value="visual">Visuals</TabsTrigger>
+          </TabsList>
+          <TabsContent value="chat">
+            <div
+              className="flex-1 gap-2 overflow-auto h-full p-2"
+              style={{ maxHeight: "70vh", overflow: "scroll" }}
+            >
+              {conversation &&
+                conversation.map((item, index) => (
+                  <ChatMessage
+                    key={index}
+                    message={item.message}
+                    isUser={item.isUser}
+                  />
+                ))}
             </div>
-            <div className="flex-1"/>
-            <form className="relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring">
-                <Label htmlFor="message" className="sr-only">Message</Label>
-                <Textarea id="message" placeholder="Type your message here..." value={message} onChange={handleOnChange} className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0"/>
-                <TooltipTriggerAndContent handleSendMessage={handleSendMessage}/>
+            
+            <form className="flex-grow-0 relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring">
+              <Label htmlFor="message" className="sr-only">
+                Message
+              </Label>
+              <Textarea
+                id="message"
+                placeholder="Type your message here..."
+                value={message}
+                onChange={handleOnChange}
+                className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0"
+              />
+              <TooltipTriggerAndContent handleSendMessage={handleSendMessage} />
             </form>
-        </div>);
+            
+          </TabsContent>
+          <TabsContent value="visual">Change your password here.</TabsContent>
+        </Tabs>
+      </div>
+    );
 };
 
 const ChatMessage = ({ message, isUser }) => {
