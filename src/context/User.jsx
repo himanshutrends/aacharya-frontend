@@ -35,7 +35,7 @@ export const UserProvider = ({ children }) => {
         if (local_user) {
             local_user = JSON.parse(local_user)
             console.log(local_user)
-            const response = await fetch('http://localhost:5000/auth/is_authenticated', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}auth/is_authenticated`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ export const UserProvider = ({ children }) => {
         setLoading(true);
         try{
             const { email, password, rememberMe } = auth_user;
-            const response = await fetch('http://localhost:5000/auth/login', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -95,7 +95,7 @@ export const UserProvider = ({ children }) => {
         setLoading(true);
         try{
             const { email, password, first_name, last_name } = auth_user;
-            const response = await fetch('http://localhost:5000/auth/signup', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}auth/signup`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
