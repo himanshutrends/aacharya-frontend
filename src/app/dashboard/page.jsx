@@ -5,8 +5,6 @@ import data from "./data"
 // components
 import Link from "next/link"
 import Image from "next/image"
-import { remark } from "remark"
-import remarkHtml from "remark-html"
 import UpNav from "@/components/upnav"
 import { Triangle } from "lucide-react"
 import LeftNav from "@/components/leftnav"
