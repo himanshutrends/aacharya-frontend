@@ -1,4 +1,5 @@
-import React, { useCallback } from 'react';
+'use client'
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import ReactFlow, {
     useNodesState,
     useEdgesState,
@@ -7,30 +8,20 @@ import ReactFlow, {
     Panel,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import data from "./data"
+import axios from 'axios';
 import Dagre from '@dagrejs/dagre';
-
-export default function () {
-    return (
-        <ReactFlowProvider>
-            <FlowChartComponent />
-        </ReactFlowProvider>
-    );
-};
+import { useUser } from '@/context/User';
 
 const generateNodesAndEdges = (data) => {
-    // Mapping nodes with their unique IDs
     const nodesMap = {};
     data.forEach((item) => {
         nodesMap[item.id] = {
             id: item.id,
-            topic: item.topic,
             position: { x: 100, y: parseFloat(item.start_time) },
             data: { label: item.topic },
         };
     });
 
-    // Generating edges based on parent_node relationships
     const edges = data.reduce((acc, item) => {
         if (item.parent_node && nodesMap[item.parent_node]) {
             acc.push({
@@ -41,18 +32,15 @@ const generateNodesAndEdges = (data) => {
         }
         return acc;
     }, []);
-    // console.log(nodesMap, edges)
 
-    // Convert nodesMap to initialNodes array
     const initialNodes = Object.values(nodesMap);
 
     return { initialNodes, initialEdges: edges };
 };
 
-const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-
-const getLayoutedElements = (nodes, edges, options) => {
-    g.setGraph({ rankdir: options.direction });
+const getLayoutedElements = (nodes, edges, direction) => {
+    const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
+    g.setGraph({ rankdir: direction });
 
     edges.forEach((edge) => g.setEdge(edge.source, edge.target));
     nodes.forEach((node) => g.setNode(node.id, node));
@@ -62,8 +50,6 @@ const getLayoutedElements = (nodes, edges, options) => {
     return {
         nodes: nodes.map((node) => {
             const position = g.node(node.id);
-            // We are shifting the dagre node position (anchor=center center) to the top left
-            // so it matches the React Flow node anchor point (top left).
             const x = position.x - node.width / 2;
             const y = position.y - node.height / 2;
 
@@ -73,15 +59,49 @@ const getLayoutedElements = (nodes, edges, options) => {
     };
 };
 
-const FlowChartComponent = () => {
-    const { initialNodes, initialEdges } = generateNodesAndEdges(data);
+const FlowChartComponent = ({params}) => {
+    const [data, setData] = useState(null);
+    const [nodes, setNodes, onNodesChange] = useNodesState([]);
+    const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const { fitView } = useReactFlow();
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+    const { user } = useUser();
+
+    const fetchData = useCallback(async () => {
+        try {
+            if (user) {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/get-visuals?q=${params.slug}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + user.access_token
+                    }
+                });
+                console.log('Data:', response);
+                setData(response.response);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }, []);
+
+    // useEffect(() => {
+    //     fetchData();
+    // }, [fetchData]);
+
+    useEffect(() => {
+        if (data) {
+            const { initialNodes, initialEdges } = generateNodesAndEdges(data);
+            const layouted = getLayoutedElements(initialNodes, initialEdges, 'TB');
+
+            setNodes(layouted.nodes);
+            setEdges(layouted.edges);
+
+            fitView();
+        }
+    }, [data, fitView, setNodes, setEdges]);
 
     const onLayout = useCallback(
         (direction) => {
-            const layouted = getLayoutedElements(nodes, edges, { direction });
+            const layouted = getLayoutedElements(nodes, edges, direction);
 
             setNodes([...layouted.nodes]);
             setEdges([...layouted.edges]);
@@ -90,7 +110,7 @@ const FlowChartComponent = () => {
                 fitView();
             });
         },
-        [nodes, edges],
+        [nodes, edges, fitView, setNodes, setEdges]
     );
 
     return (
@@ -103,11 +123,18 @@ const FlowChartComponent = () => {
                 fitView
             >
                 <Panel position="top-right">
-                    <button onClick={() => onLayout('TB')}>vertical layout</button>
-                    <button onClick={() => onLayout('LR')}>horizontal layout</button>
+                    <button onClick={() => onLayout('TB')}>Vertical Layout</button>
+                    <button onClick={() => onLayout('LR')}>Horizontal Layout</button>
                 </Panel>
             </ReactFlow>
         </div>
     );
-
 };
+
+export default function ({params}) {
+    return (
+        <ReactFlowProvider>
+            <FlowChartComponent params={params}/>
+        </ReactFlowProvider>
+    );
+}
