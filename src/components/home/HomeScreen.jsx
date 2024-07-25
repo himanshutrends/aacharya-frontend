@@ -11,20 +11,20 @@ import { ThemeProvider } from "@/components/themeprovider";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
-import isAuthenticated from "@/components/auth/isAuthenticated";
+import { isAuthenticated } from "@/components/auth/isAuthenticated";
 import { useUser } from "@/context/User";
+import Image from "next/image"
 
 function HomeSearch() {
-  const { user } = useUser();
+  const { user, loading } = useUser();
   const param = useSearchParams();
 
   const [params, setParams] = useState({ search: param.get("search") });
   const [videos, setVideos] = useState([]);
-  
+
   const handleChange = (e) => {
     setParams({ [e.target.name]: e.target.value });
   }
-
   const handleSerch = () => {
     if (params.search) {
       // parse space to %20
@@ -32,7 +32,6 @@ function HomeSearch() {
       window.location.href = `/home?search=${search}`;
     }
   }
-
   useEffect(() => {
     (async () => {
       if (user) {
@@ -45,7 +44,6 @@ function HomeSearch() {
           }
         );
         if (response.data) {
-          console.log(response.data);
           setVideos(response.data);
         }
       }
@@ -69,9 +67,7 @@ function HomeSearch() {
             </div>
             <LeftNav />
           </aside>
-
           <UpNav />
-
           <div className="">
             <main className="overflow-auto flex flex-col items-center justify-center ">
               <h1 className="font-bold text-3xl mb-16">
@@ -84,36 +80,41 @@ function HomeSearch() {
                 </div>
                 <Button className="w-min" onClick={handleSerch}>Search</Button>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-10">
-                {videos && videos.map((item, index) => (<div className="w-80 rounded" key={index}>
-                        <Link href={`/video/${item.video_id}`} key={index}>
-                          <img src={`https://i.ytimg.com/vi/${item.video_id}/maxresdefault.jpg`} className="rounded-lg object-contain" alt={item.title} />
-                          <p className="font-medium text-lg">{item.title}</p>
-                        </Link>
-                      </div>))}
-                <img src="https://i.ytimg.com/vi/1X7fzv6l9G0/1.jpg" className="rounded-lg object-contain" alt="title" />
-                {/* Loading Effect Here edit */}
-                {/* <div className="animate-pulse space-y-3">
-                  <div className="bg-slate-300 h-[180px] w-[320px] rounded-xl" />
-                  <div className="bg-slate-300 h-4 w-[250px]" />
-                </div>
-                <div className="animate-pulse space-y-3">
-                  <div className="bg-slate-300 h-[180px] w-[320px] rounded-xl" />
-                  <div className="bg-slate-300 h-4 w-[250px]" />
-                </div><div className="animate-pulse space-y-3">
-                  <div className="bg-slate-300 h-[180px] w-[320px] rounded-xl" />
-                  <div className="bg-slate-300 h-4 w-[250px]" />
-                </div><div className="animate-pulse space-y-3">
-                  <div className="bg-slate-300 h-[180px] w-[320px] rounded-xl" />
-                  <div className="bg-slate-300 h-4 w-[250px]" />
-                </div><div className="animate-pulse space-y-3">
-                  <div className="bg-slate-300 h-[180px] w-[320px] rounded-xl" />
-                  <div className="bg-slate-300 h-4 w-[250px]" />
-                </div><div className="animate-pulse space-y-3">
-                  <div className="bg-slate-300 h-[180px] w-[320px] rounded-xl" />
-                  <div className="bg-slate-300 h-4 w-[250px]" />
-                </div> */}
-              </div>
+              {loading || !videos ?
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-10">
+                  <div className="animate-pulse space-y-3">
+                    <div className="bg-slate-300 h-[180px] w-[320px] rounded-xl" />
+                    <div className="bg-slate-300 h-4 w-[250px]" />
+                  </div>
+                  <div className="animate-pulse space-y-3">
+                    <div className="bg-slate-300 h-[180px] w-[320px] rounded-xl" />
+                    <div className="bg-slate-300 h-4 w-[250px]" />
+                  </div>
+                  <div className="animate-pulse space-y-3">
+                    <div className="bg-slate-300 h-[180px] w-[320px] rounded-xl" />
+                    <div className="bg-slate-300 h-4 w-[250px]" />
+                  </div>
+                  <div className="animate-pulse space-y-3">
+                    <div className="bg-slate-300 h-[180px] w-[320px] rounded-xl" />
+                    <div className="bg-slate-300 h-4 w-[250px]" />
+                  </div>
+                  <div className="animate-pulse space-y-3">
+                    <div className="bg-slate-300 h-[180px] w-[320px] rounded-xl" />
+                    <div className="bg-slate-300 h-4 w-[250px]" />
+                  </div>
+                  <div className="animate-pulse space-y-3">
+                    <div className="bg-slate-300 h-[180px] w-[320px] rounded-xl" />
+                    <div className="bg-slate-300 h-4 w-[250px]" />
+                  </div>
+                </div> :
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-10">
+                  {videos && videos.map((item, index) => (<div className="w-80 rounded" key={index}>
+                    <Link href={`/video/${item.video_id}`} key={index}>
+                      <Image src={`https://i.ytimg.com/vi/${item.video_id}/maxresdefault.jpg`} className="rounded-lg object-contain" alt={item.title} height={500} width={500}/>
+                      <p className="font-medium text-lg">{item.title}</p>
+                    </Link>
+                  </div>))}
+                </div>}
             </main>
           </div>
         </div>

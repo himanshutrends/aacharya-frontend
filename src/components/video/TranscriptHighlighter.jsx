@@ -3,7 +3,7 @@ import axios from 'axios';
 // context
 import { useTime } from '@/context/TimeContext';
 import { useUser } from '@/context/User';
-const TranscriptHighlighter = ({ params }) => {
+const TranscriptHighlighter = ({ videoId }) => {
     const [transcript, setTranscript] = useState(null);
     const transcriptRef = useRef(null);
     const [activeIndex, setActiveIndex] = useState(null); // Store active word index
@@ -13,9 +13,9 @@ const TranscriptHighlighter = ({ params }) => {
     // Fetch the transcript data
     useEffect(() => {
         (async () => {
-            if (user && params.slug) {
+            if (user && videoId) {
                 try {
-                    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/transcript?q=${params.slug}`, {
+                    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_DOMAIN}chat/transcript?q=${videoId}`, {
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': 'Bearer ' + user.access_token
@@ -34,7 +34,7 @@ const TranscriptHighlighter = ({ params }) => {
                 }
             }
         })()
-    }, [params.slug, loading])
+    }, [videoId, loading])
 
     // Scroll to the active segment in the transcript
     useEffect(() => {
@@ -69,9 +69,6 @@ const TranscriptHighlighter = ({ params }) => {
         }
     }, [activeIndex]);
 
-    if (loading) {
-        return <div>Loading transcript...</div>;
-    }
     return (<div ref={transcriptRef}>
         {transcript && transcript.map((segment, segmentIndex) => {
             const words = segment.text.split(' ');

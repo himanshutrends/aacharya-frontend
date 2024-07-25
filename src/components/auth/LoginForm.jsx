@@ -1,17 +1,19 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useUser } from "@/context/User";
+
 export default function LoginForm() {
     const [user, setUser] = useState({ email: "", password: "" })
     const { login, loading, setLoading, error } = useUser()
     const router = useRouter()
-    
+    const params = useSearchParams()
+
     const handleChange = (event) => {
         const { name, value } = event.target;
         setUser((prev) => ({ ...prev, [name]: value }));
@@ -23,7 +25,13 @@ export default function LoginForm() {
       }
       login(user)
       if(!loading && !error.status){
-        router.push("/");
+        const redirect = params.get("redirect")
+        if(redirect) {
+          console.log(redirect, params)
+          router.push(redirect)
+        } else {
+          router.push("/")
+        }
       }
     };
 

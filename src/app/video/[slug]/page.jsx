@@ -36,7 +36,7 @@ const VideoPage = ({ params }) => {
                 <UpNav />
                 <main className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-2">
                   <ConversationProvider>
-                    <VideoDisplay params={params}/>
+                    <VideoDisplay videoId={params.slug}/>
                     <ChatComponents params={params}/>
                   </ConversationProvider>
                 </main>
