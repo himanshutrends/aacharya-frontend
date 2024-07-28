@@ -12,12 +12,10 @@ export default function Features02() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="relative max-w-3xl mx-auto text-center pb-12 md:pb-20">
             <h2 className="font-inter-tight text-3xl md:text-4xl font-bold text-zinc-900 mb-4">
-              AI-powered features and effects
+            Real-Time Interactive Learning
             </h2>
             <p className="text-lg text-zinc-500">
-              Whenever you are ready, just hit publish to turn your site
-              sketches into an actual designs. No creating, no skills, no
-              reshaping.
+            Engage directly with educators during live video sessions, ensuring immediate answers to your questions. This feature fosters a dynamic and engaging learning environment, much like a traditional classroom.
             </p>
           </div>
           <div className="max-w-xs mx-auto sm:max-w-none grid sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-4 lg:gap-8">

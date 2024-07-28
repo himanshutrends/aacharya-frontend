@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react"
 import { Transition } from "@headlessui/react"
 import Image from "next/image"
 import FeatureIllustration from "@/public/images/feature-illustration.png"
-import FeatureImage01 from "@/public/images/feature-01.png"
+import FeatureImage01 from "@/public/images/feature_aacharya.png"
 
 export default function Features01() {
   const [tab, setTab] = useState(1)
@@ -26,11 +26,10 @@ export default function Features01() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="max-w-3xl mx-auto text-center pb-12">
             <h2 className="font-inter-tight text-3xl md:text-4xl font-bold text-zinc-900 mb-4">
-              Go further than the speed of thought
+              Empowering Learners with Real-Time Q&A and Personalized Content
             </h2>
             <p className="text-lg text-zinc-500">
-              AI reads and understands your designs, and with nothing more than
-              a single line of feedback, perform complex actions autonomously.
+              Immediate answers, personalized notes, and advanced tracking. Achieve your learning goals with Aacharya.
             </p>
           </div>
           <div>
@@ -49,7 +48,7 @@ export default function Features01() {
               >
                 <div className="flex items-center justify-between mb-1">
                   <div className="font-inter-tight font-semibold text-zinc-900">
-                    AI Effects
+                    Real-Time Interactive Q&A
                   </div>
                   <svg
                     className={`fill-zinc-400 shrink-0 ml-2 ${
@@ -63,7 +62,7 @@ export default function Features01() {
                   </svg>
                 </div>
                 <div className="text-sm text-zinc-500">
-                  Visually structure your designs and structure them easily.
+                  Get immediate answers during live sessions for a dynamic learning experience.
                 </div>
               </button>
               <button
@@ -79,7 +78,7 @@ export default function Features01() {
               >
                 <div className="flex items-center justify-between mb-1">
                   <div className="font-inter-tight font-semibold text-zinc-900">
-                    Creative Mode
+                  Advanced Progress Tracking Dashboard
                   </div>
                   <svg
                     className={`fill-zinc-400 shrink-0 ml-2 ${
@@ -93,7 +92,7 @@ export default function Features01() {
                   </svg>
                 </div>
                 <div className="text-sm text-zinc-500">
-                  Visually structure your designs and structure them easily.
+                Visualize learning progress with real-time insights and personalized feedback.
                 </div>
               </button>
               <button
@@ -109,7 +108,7 @@ export default function Features01() {
               >
                 <div className="flex items-center justify-between mb-1">
                   <div className="font-inter-tight font-semibold text-zinc-900">
-                    Realistic Images
+                  Customized Study Materials
                   </div>
                   <svg
                     className={`fill-zinc-400 shrink-0 ml-2 ${
@@ -123,7 +122,7 @@ export default function Features01() {
                   </svg>
                 </div>
                 <div className="text-sm text-zinc-500">
-                  Visually structure your designs and structure them easily.
+                Receive tailored notes based on your session interactions and queries.
                 </div>
               </button>
               <button
@@ -139,7 +138,7 @@ export default function Features01() {
               >
                 <div className="flex items-center justify-between mb-1">
                   <div className="font-inter-tight font-semibold text-zinc-900">
-                    Powerful Plugins
+                  Adaptive Learning Paths
                   </div>
                   <svg
                     className={`fill-zinc-400 shrink-0 ml-2 ${
@@ -153,7 +152,7 @@ export default function Features01() {
                   </svg>
                 </div>
                 <div className="text-sm text-zinc-500">
-                  Visually structure your designs and structure them easily.
+                Automatic course recommendations fill gaps and build strong knowledge foundations.
                 </div>
               </button>
             </div>

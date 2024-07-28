@@ -30,15 +30,13 @@ export default function Features03() {
             <div className="lg:max-w-none lg:min-w-[524px]">
               <div className="mb-8">
                 <div className="inline-flex text-sm font-medium text-zinc-400 px-4 py-0.5 border border-transparent [background:linear-gradient(theme(colors.zinc.800),theme(colors.zinc.800))_padding-box,linear-gradient(120deg,theme(colors.zinc.700),theme(colors.zinc.700/0),theme(colors.zinc.700))_border-box] rounded-full mb-4">
-                  Scale Your Team
+                <img src="https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d4735304ff6292a690345.svg" alt="🚀"></img>
                 </div>
                 <h3 className="font-inter-tight text-3xl font-bold text-zinc-200 mb-4">
-                  Design-powered workflows for teams of any size
+                Personalized Learning Experience
                 </h3>
                 <p className="text-lg text-zinc-500">
-                  Gray can understand what you are designing, learn from your
-                  feedback to take your creativity further, and turn it
-                  instantly into beautiful images.
+                Aacharya tailors content based on each learner's interactions and progress. Adaptive paths ensure material matches individual needs and pace. This results in a more engaging and effective learning experience.
                 </p>
               </div>
               {/* Tabs buttons */}
@@ -64,11 +62,10 @@ export default function Features03() {
                   </svg>
                   <div>
                     <div className="font-inter-tight text-lg font-semibold text-zinc-200 mb-1">
-                      Make designs feel real
+                    Tailored Content
                     </div>
                     <div className="text-zinc-500">
-                      Save time and keep things consistent with reusable images,
-                      and 3D assets in shared libraries.
+                    Customizes study materials based on individual interactions and queries.
                     </div>
                   </div>
                 </button>
@@ -93,11 +90,10 @@ export default function Features03() {
                   </svg>
                   <div>
                     <div className="font-inter-tight text-lg font-semibold text-zinc-200 mb-1">
-                      Bring creatives closer
+                    Adaptive Learning Paths
                     </div>
                     <div className="text-zinc-500">
-                      Save time and keep things consistent with reusable images,
-                      and 3D assets in shared libraries.
+                    Adjusts curriculum based on progress and understanding in real-time.
                     </div>
                   </div>
                 </button>
@@ -122,11 +118,10 @@ export default function Features03() {
                   </svg>
                   <div>
                     <div className="font-inter-tight text-lg font-semibold text-zinc-200 mb-1">
-                      Scale and align your design team
+                    Focused Feedback
                     </div>
                     <div className="text-zinc-500">
-                      Save time and keep things consistent with reusable images,
-                      and 3D assets in shared libraries.
+                    Provides personalized insights to highlight strengths and address learning gaps.
                     </div>
                   </div>
                 </button>
@@ -234,12 +229,11 @@ export default function Features03() {
                   <path d="M15 9a1 1 0 0 1 0 2c-.441 0-1.243.92-1.89 1.716.319 1.005.529 1.284.89 1.284a1 1 0 0 1 0 2 2.524 2.524 0 0 1-2.339-1.545A3.841 3.841 0 0 1 9 16a1 1 0 0 1 0-2c.441 0 1.243-.92 1.89-1.716C10.57 11.279 10.361 11 10 11a1 1 0 0 1 0-2 2.524 2.524 0 0 1 2.339 1.545A3.841 3.841 0 0 1 15 9Zm-5-1H7.51l-.02.142C6.964 11.825 6.367 16 3 16a3 3 0 0 1-3-3 1 1 0 0 1 2 0 1 1 0 0 0 1 1c1.49 0 1.984-2.48 2.49-6H3a1 1 0 1 1 0-2h2.793c.52-3.1 1.4-6 4.207-6a3 3 0 0 1 3 3 1 1 0 0 1-2 0 1 1 0 0 0-1-1C8.808 2 8.257 3.579 7.825 6H10a1 1 0 0 1 0 2Z" />
                 </svg>
                 <h3 className="font-inter-tight font-semibold text-zinc-200">
-                  Discussions
+                  Dynamic FlowCharts
                 </h3>
               </div>
               <p className="text-sm text-zinc-500">
-                Keep workflows efficient with tools that give teams visibility
-                throughout the process.
+              Interactive flowcharts guide your learning path and help you explore related topics seamlessly.
               </p>
             </div>
             {/* Block #2 */}
@@ -254,12 +248,11 @@ export default function Features03() {
                   <path d="M13 16c-.153 0-.306-.035-.447-.105l-3.851-1.926c-.231.02-.465.031-.702.031-4.411 0-8-3.14-8-7s3.589-7 8-7 8 3.14 8 7c0 1.723-.707 3.351-2 4.63V15a1.003 1.003 0 0 1-1 1Zm-4.108-4.054c.155 0 .308.036.447.105L12 13.382v-2.187c0-.288.125-.562.341-.752C13.411 9.506 14 8.284 14 7c0-2.757-2.691-5-6-5S2 4.243 2 7s2.691 5 6 5c.266 0 .526-.02.783-.048a1.01 1.01 0 0 1 .109-.006Z" />
                 </svg>
                 <h3 className="font-inter-tight font-semibold text-zinc-200">
-                  Team views
+                Personalized Learning Dashboard
                 </h3>
               </div>
               <p className="text-sm text-zinc-500">
-                Keep workflows efficient with tools that give teams visibility
-                throughout the process.
+              Gain detailed insights into your progress with a feature-rich dashboard tailored to your learning journey.
               </p>
             </div>
             {/* Block #3 */}
@@ -274,12 +267,11 @@ export default function Features03() {
                   <path d="M13 0H1C.4 0 0 .4 0 1v14c0 .6.4 1 1 1h8l5-5V1c0-.6-.4-1-1-1ZM2 2h10v8H8v4H2V2Z" />
                 </svg>
                 <h3 className="font-inter-tight font-semibold text-zinc-200">
-                  Powerful search
+                AI Interview Feature
                 </h3>
               </div>
               <p className="text-sm text-zinc-500">
-                Keep workflows efficient with tools that give teams visibility
-                throughout the process.
+              Simulate real-world interviews with AI and get instant feedback to improve your skills.
               </p>
             </div>
             {/* Block #4 */}
@@ -294,12 +286,11 @@ export default function Features03() {
                   <path d="M7 14c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7ZM7 2C4.243 2 2 4.243 2 7s2.243 5 5 5 5-2.243 5-5-2.243-5-5-5Zm8.707 12.293a.999.999 0 1 1-1.414 1.414L11.9 13.314a8.019 8.019 0 0 0 1.414-1.414l2.393 2.393Z" />
                 </svg>
                 <h3 className="font-inter-tight font-semibold text-zinc-200">
-                  Enhancing
+                Real-Time Interaction
                 </h3>
               </div>
               <p className="text-sm text-zinc-500">
-                Keep workflows efficient with tools that give teams visibility
-                throughout the process.
+              Ask questions, generate notes, and summarize videos interactively as you watch.
               </p>
             </div>
             {/* Block #5 */}
@@ -314,12 +305,11 @@ export default function Features03() {
                   <path d="M14.6.085 8 2.885 1.4.085c-.5-.2-1.4-.1-1.4.9v11c0 .4.2.8.6.9l7 3c.3.1.5.1.8 0l7-3c.4-.2.6-.5.6-.9v-11c0-1-.9-1.1-1.4-.9ZM2 2.485l5 2.1v8.8l-5-2.1v-8.8Zm12 8.8-5 2.1v-8.7l5-2.1v8.7Z" />
                 </svg>
                 <h3 className="font-inter-tight font-semibold text-zinc-200">
-                  Powerful search
+                Gamification
                 </h3>
               </div>
               <p className="text-sm text-zinc-500">
-                Keep workflows efficient with tools that give teams visibility
-                throughout the process.
+              Earn badges and achievements to enhance motivation and make learning fun.
               </p>
             </div>
             {/* Block #6 */}
@@ -334,12 +324,11 @@ export default function Features03() {
                   <path d="M13 14a1 1 0 0 1 0 2H1a1 1 0 0 1 0-2h12Zm-6.707-2.293-5-5a1 1 0 0 1 1.414-1.414L6 8.586V1a1 1 0 1 1 2 0v7.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-1.414 0Z" />
                 </svg>
                 <h3 className="font-inter-tight font-semibold text-zinc-200">
-                  Team views
+                AI-Generated Tests
                 </h3>
               </div>
               <p className="text-sm text-zinc-500">
-                Keep workflows efficient with tools that give teams visibility
-                throughout the process.
+              Take custom tests created by AI to assess and reinforce your understanding of completed content.
               </p>
             </div>
           </div>
