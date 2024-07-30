@@ -3,24 +3,24 @@ import Counter from "@/components/landing/counter"
 export default function Stats() {
   const stats = [
     {
-      number: 476,
-      suffix: "K",
-      text: "Assets packed with power beyond your imagination."
+      number: 12560,
+      suffix: "",
+      text: "Over 10,000 real-time Q&A sessions conducted"
     },
     {
-      number: 1.44,
-      suffix: "K",
-      text: "Assets packed with power beyond your imagination."
+      number: 20329,
+      suffix: "",
+      text: "Thousands of personalized study notes generated for learners"
     },
     {
-      number: 1.5,
-      suffix: "M+",
-      text: "Assets packed with power beyond your imagination."
+      number: 85,
+      suffix: "%",
+      text: "85% of users report increased understanding and retention"
     },
     {
-      number: 192,
-      suffix: "K",
-      text: "Assets packed with power beyond your imagination."
+      number: 5000,
+      suffix: "",
+      text: "Over 5,000 adaptive learning paths created"
     }
   ]
 
